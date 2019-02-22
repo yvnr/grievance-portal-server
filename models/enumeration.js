@@ -1,3 +1,5 @@
+//`use strict`;
+
 const Gender = ['Male',
     'Female'
 ];
@@ -26,10 +28,19 @@ const Pincode = ['500081',
     '208005',
     '226001',
     '226005'
-]
+];
+
+const Status = ['submitted',
+    'scrutinized',
+    'work in progress',
+    'resolved',
+    'rejected',
+    'cancelled'
+];
 
 module.exports = Gender;
 module.exports = State;
 module.exports = Zone;
 module.exports = District;
 module.exports = Pincode;
+module.exports = Status;

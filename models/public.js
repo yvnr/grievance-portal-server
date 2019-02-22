@@ -1,3 +1,5 @@
+//`use strict`;
+
 const mongoose = require('mongoose');
 const Email = require('mongoose-type-email');
 const Enumeration = require('./enumeration');
@@ -44,6 +46,10 @@ const publicSchema = new mongoose.Schema({
     },
     email: {
         type: mongoose.SchemaTypes.Email,
+        required: true
+    },
+    fullName: {
+        type: String,
         required: true
     },
     password: {

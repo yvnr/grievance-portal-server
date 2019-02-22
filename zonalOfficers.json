@@ -1,0 +1,33 @@
+[{
+        "username": "8328570589",
+        "phoneNumber": "8328570589",
+        "zoneName": "Telangan-North",
+        "fullName": "t vivekvardhan reddy",
+        "password": "vivek*1999",
+        "email": "yekkalurivayu@gmail.com"
+    },
+    {
+        "username": "8328513712",
+        "phoneNumber": "8328513712",
+        "zoneName": "Telanagana-South",
+        "fullName": "vamshi kotapally",
+        "password": "vamshi*1999",
+        "email": "varunganji@gmail.com"
+    },
+    {
+        "username": "9133878780",
+        "phoneNumber": "9133878780",
+        "zoneName": "Uttarpradesh-North",
+        "fullName": "m sumanth reddy",
+        "password": "sumanth*1999",
+        "email": "sriharsha2098@gmail.com"
+    },
+    {
+        "username": "9573048281",
+        "phoneNumber": "9573048281",
+        "zoneName": "Uttarpradesh-South",
+        "fullName": "lalith sai",
+        "password": "lalith*1999",
+        "email": "evikas10020@gmail.com"
+    }
+]
