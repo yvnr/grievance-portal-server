@@ -12,6 +12,8 @@ const pincodeSchema = new mongoose.Schema({
         enum: Enumeration.District,
         required: true
     }
+},{
+    timestamps:true
 });
 
 const Pincode = mongoose.model('Pincode', pincodeSchema);

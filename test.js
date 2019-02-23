@@ -1,9 +1,34 @@
-const Escalation = require('./models/escalation');
 const mongoose = require('mongoose');
+const Escalation = require('./models/escalation');
 
-const connection = mongoose.connect('mongodb://localhost:27017/dippGrievanceDB', {
+mongoose.connect('mongodb://localhost:27017/dippGrievanceDB', {
     useNewUrlParser: true
 });
 
-Escalation.updateOfficer('1550814665705').then(doc => console.log(doc))
-    .catch(err => console.log(err));
+mongoose.Promise = global.Promise
+
+const currentTime = Date.now();
+console.log('hello');
+(function () {
+    Escalation.collection.findAndModify({
+        grievanceId: "1550894433235"
+    }, [], {
+        '$push': {
+            'officerHierarchyStack': {
+                '$each': ["7777777777"],
+                '$position': 0
+            },
+            'escalationStack': {
+                '$each': [currentTime + ""],
+                '$position': 0
+            }
+        }
+    }, {
+        new: true
+    }, (err, doc) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(doc);
+    });
+})();

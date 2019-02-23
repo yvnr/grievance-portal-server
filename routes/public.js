@@ -20,6 +20,7 @@ const storage = multer.diskStorage({
     }
 });
 
+//for multer
 const upload = multer({
     storage
 });
@@ -144,10 +145,9 @@ router.route('/login')
 
 //public raising new grievance process
 router.route('/newGrievance')
-    //     include 
-    //      passport.authenticate('jwt', {
-    //     session: false
-    // }), 
+// passport.authenticate('jwt', {
+//     session: false
+// }), 
     .post(upload.any(), (req, res) => {
         //creating attachments path array
         console.log(req.files);

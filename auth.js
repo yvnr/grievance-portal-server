@@ -149,7 +149,6 @@ module.exports = () => {
     }));
 
     //passport jwt strategy to decode jwt from request
-
     //options for strategy
     const options = {
         jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme('Bearer'),

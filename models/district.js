@@ -12,6 +12,8 @@ const districtSchema = new mongoose.Schema({
         enum: Enumeration.Zone,
         required: true
     }
+}, {
+    timestamps: true
 });
 
 const District = mongoose.model('District', districtSchema);

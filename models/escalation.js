@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+//for promises
+mongoose.Promise = global.Promise;
+
 const escalationSchema = new mongoose.Schema({
     grievanceId: {
         type: String,
@@ -65,13 +68,27 @@ async function updateOfficer(idOfGrievance) {
         await mail(officerEmail, subForOfficial, msgForOfficial);
         console.log(`mail sent to official`);
 
-        const updatedEscalation = await Escalation.findOneAndUpdate({
+        //update escalation object
+        const updatedEscalation = await Escalation.collection.findAndModify({
             grievanceId: idOfGrievance
-        }, {
-            $push: {
-                officerHierarchyStack: zonalOfficerObject.username,
-                escalationStack: currentTime
+        }, [], {
+            '$push': {
+                'officerHierarchyStack': {
+                    '$each': [zonalOfficerObject.username],
+                    '$position': 0
+                },
+                'escalationStack': {
+                    '$each': [currentTime + ""],
+                    '$position': 0
+                }
             }
+        }, {
+            new: true
+        }, (err, doc) => {
+            if (err)
+                console.log(err);
+            else
+                console.log(doc);
         });
 
         //returned updated escalation object
@@ -83,3 +100,46 @@ async function updateOfficer(idOfGrievance) {
 };
 
 module.exports.updateOfficer = updateOfficer;
+
+async function getGrievancesFunction(officialUsername) {
+    try {
+        const Grievance = require('./grievance');
+        const GrievanceStatus = require('./grievanceStatus');
+
+        const grievanceIds = await Escalation.find({
+            "officerHierarchyStack.0": officialUsername
+        }).select('grievanceId').exec();
+
+        console.log(grievanceIds);
+        const grievancesArrayPromise = grievanceIds.map(async grievanceIdObject => {
+            try {
+                const grievanceStatus = await GrievanceStatus.findOne({
+                    grievanceId: grievanceIdObject.grievanceId
+                }).select('status').exec();
+
+                console.log(grievanceStatus);
+
+                if (grievanceStatus.status !== 'cancelled') {
+                    const grievance = await Grievance.findOne({
+                        id: grievanceIdObject.grievanceId
+                    }).exec();
+
+                    console.log(grievance);
+
+                    return grievance;
+                }
+            } catch (err) {
+                throw err;
+            }
+        });
+
+        const grievancesArrayObject = await Promise.all(grievancesArrayPromise);
+        //returing grievances
+        return grievancesArrayObject;
+
+    } catch (err) {
+        throw err;
+    }
+};
+
+module.exports.getGrievances = getGrievancesFunction;

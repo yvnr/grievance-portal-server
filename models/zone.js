@@ -12,6 +12,8 @@ const zoneSchema = new mongoose.Schema({
         enum: Enumeration.Zone,
         required: true
     }
+}, {
+    timestamps: true
 });
 
 const Zone = mongoose.model('Zone', zoneSchema);

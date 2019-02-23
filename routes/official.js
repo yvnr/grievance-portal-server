@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 
 const DistrictOfficer = require('./../models/districtOfficer');
 const ZonalOfficer = require('./../models/zonalOfficer');
+const Escalation = require('./../models/escalation');
 
 //official login process
 router.route('/login')
@@ -84,7 +85,29 @@ router.route('/login')
                 }
             }
         })(req, res);
-    })
+    });
 
+//official grievance view process
+router.route('/allocatedGrievances')
+    // passport.authenticate('jwt', {
+    //     session: false
+    // }), 
+    .get((req, res) => {
+        Escalation.getGrievances(req.query.username)
+            .then(grievances => {
+                console.log(grievances);
+                res.status(200).json({
+                    message: `successful`,
+                    grievances: grievances
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: `unsuccesful`,
+                    grievances: null
+                });
+            });
+    });
 
 module.exports = router;
