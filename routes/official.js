@@ -30,11 +30,8 @@ const upload = multer({
 
 //official grievance view process
 router.route('/allocatedGrievances')
-    // passport.authenticate('jwt', {
-    //     session: false
-    // }), 
     .get((req, res) => {
-        Escalation.getGrievances(req.query.username)
+        Escalation.getGrievances(req.user.username)
             .then(grievances => {
                 console.log(grievances);
                 res.status(200).json({
@@ -52,9 +49,6 @@ router.route('/allocatedGrievances')
     });
 
 router.route('/updateGrievanceStatus')
-    // passport.authenticate('jwt', {
-    //     session: false
-    // }),
     .put((req, res) => {
         GrievanceStatus.updateStatus(req.query.grievanceId, req.query.status)
             .then(resultObject => {
@@ -70,9 +64,6 @@ router.route('/updateGrievanceStatus')
                 });
             });
     })
-    // passport.authenticate('jwt', {
-    //     session: false
-    // }),
     .post(upload.any(), (req, res) => {
         GrievanceStatus.updateStatus(req.query.grievanceId, req.query.status)
             .then(resultObject => {
@@ -104,6 +95,25 @@ router.route('/updateGrievanceStatus')
                 console.log(err);
                 res.status(500).json({
                     message: `unsuccessful`
+                });
+            });
+    });
+
+router.route('/zonalGrievances')
+    .get((req, res) => {
+        ZonalOfficer.getGrievancesForZonalOfficer(req.user.username)
+            .then(grievances => {
+                console.log(grievances);
+                res.status(200).json({
+                    message: `successful`,
+                    grievances: grievances
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: `unsuccessful`,
+                    grievances: null
                 });
             });
     });

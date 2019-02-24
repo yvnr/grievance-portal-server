@@ -62,10 +62,11 @@ connectToDatabase().then(() => {
                     message: info.message
                 });
             } else {
+                console.log(userFromAuth);
                 req.user = userFromAuth;
                 next();
             }
-        })
+        })(req, res, next);
     }
 
     function isAuthenticatedOfficial(req, res, next) {
@@ -83,10 +84,11 @@ connectToDatabase().then(() => {
                     message: info.message
                 });
             } else {
+                console.log(userFromAuth);
                 req.user = userFromAuth;
                 next();
             }
-        })
+        })(req, res, next);
     }
 
     //routes
@@ -105,7 +107,7 @@ connectToDatabase().then(() => {
 
     //to view status
     const grievance = require('./routes/grievance');
-    app.use('/grievance', grievance);
+    app.use('/api/grievance', grievance);
 
     //public
     const public = require('./routes/public');

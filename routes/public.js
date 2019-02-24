@@ -37,15 +37,18 @@ router.route('/newGrievance')
             attachmentsPath.push(file.path);
         });
 
+        //check for middleware
+        console.log(req.user.username);
+
         //generating token object
         const tokenObject = {
-            token: req.body.username,
-            tokenPassword: req.body.username.substring(3, 7)
+            token: req.user.username,
+            tokenPassword: req.user.username.substring(3, 7)
         };
 
         const grievance = new Grievance({
             id: Date.now(),
-            username: req.body.username,
+            username: req.user.username,
             fullName: req.body.fullName,
             country: req.body.country,
             address: req.body.address,

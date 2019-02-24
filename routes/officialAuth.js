@@ -83,3 +83,5 @@ router.route('/login')
             }
         })(req, res);
     });
+
+module.exports = router;

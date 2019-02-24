@@ -123,3 +123,5 @@ router.route('/login')
             }
         })(req, res, next);
     });
+
+module.exports = router;

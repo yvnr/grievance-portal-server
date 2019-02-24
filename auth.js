@@ -74,11 +74,11 @@ module.exports = () => {
                                 console.log(`user authenticated`);
                                 return done(null, user, {
                                     message: `successful`
-                                })
+                                });
                             } else {
                                 return done(null, false, {
                                     message: `password is incorect`
-                                })
+                                });
                             }
                         });
                 }
@@ -87,8 +87,8 @@ module.exports = () => {
                 console.log(`Error occured ${err}`);
                 return (err, false, {
                     message: `unsucessful`
-                })
-            })
+                });
+            });
     }));
 
     //local strategy to official/login route
@@ -175,7 +175,7 @@ module.exports = () => {
                 return done(err, false, {
                     message: `Internal server error`
                 });
-            })
+            });
     }));
 
     passport.use('officialJWT', new JWTStrategy(options, (jwt_payload, done) => {

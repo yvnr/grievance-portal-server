@@ -63,7 +63,7 @@ updateStatusFunction = async (grievanceId, toChangeStatus) => {
     //send mail to user
     const email = grievanceObject.email;
     const subForUser = `Notification for your grievance`;
-    const msgForUser = `Your complaint has ${toChangeStatus}`;
+    const msgForUser = `Your complaint has been ${toChangeStatus}`;
 
     mail(email, subForUser, msgForUser);
 
