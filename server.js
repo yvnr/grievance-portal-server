@@ -21,7 +21,7 @@ async function connectToDatabase() {
         console.log(`connection established successfully`);
         return connection;
     } catch (err) {
-        console.log(`connection was uncessfull`);
+        console.log(`connection was unsucessfull`);
     }
 };
 
@@ -46,19 +46,74 @@ connectToDatabase().then(() => {
     //call auth() function 
     auth();
 
+    // auth middleware
+    function isAuthenticatedPublic(req, res, next) {
+        passport.authenticate('publicJWT', {
+            session: false
+        }, (err, userFromAuth, info) => {
+            if (err) {
+                res.status(500).json({
+                    message: info.message
+                });
+            }
+            if (userFromAuth === false) {
+                console.log(`message: ${info.message}`);
+                res.status(500).json({
+                    message: info.message
+                });
+            } else {
+                req.user = userFromAuth;
+                next();
+            }
+        })
+    }
+
+    function isAuthenticatedOfficial(req, res, next) {
+        passport.authenticate('officialJWT', {
+            session: false
+        }, (err, userFromAuth, info) => {
+            if (err) {
+                res.status(500).json({
+                    message: info.message
+                });
+            }
+            if (userFromAuth === false) {
+                console.log(`message: ${info.message}`);
+                res.status(500).json({
+                    message: info.message
+                });
+            } else {
+                req.user = userFromAuth;
+                next();
+            }
+        })
+    }
+
     //routes
 
     //home
     const index = require('./routes/index');
     app.use('/', index);
 
+    //public authentication
+    const publicAuth = require('./routes/publicAuth');
+    app.use('/api/public/auth', publicAuth);
+
+    //official authentication
+    const officialAuth = require('./routes/officialAuth');
+    app.use('/api/official/auth', officialAuth);
+
+    //to view status
+    const grievance = require('./routes/grievance');
+    app.use('/grievance', grievance);
+
     //public
     const public = require('./routes/public');
-    app.use('/public', public);
+    app.use('/api/public', isAuthenticatedPublic, public);
 
     //official
     const official = require('./routes/official');
-    app.use('/official', official);
+    app.use('/api/official', isAuthenticatedOfficial, official);
 
 });
 

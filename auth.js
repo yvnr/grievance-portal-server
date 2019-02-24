@@ -155,7 +155,7 @@ module.exports = () => {
         secretOrKey: process.env.JWT_SECRET
     }
 
-    passport.use(new JWTStrategy(options, (jwt_payload, done) => {
+    passport.use('publicJWT', new JWTStrategy(options, (jwt_payload, done) => {
         Public.findOne({
                 username: jwt_payload.username
             })
@@ -165,12 +165,49 @@ module.exports = () => {
                     return done(null, user);
                 } else {
                     console.log('IN PASSPORT: user not found');
-                    done(null, false);
+                    return done(null, false, {
+                        message: `Not authenticated user`
+                    });
                 }
             })
             .catch(err => {
                 console.log(`Error occured is internal : ${err}`);
-                done(null, false);
+                return done(err, false, {
+                    message: `Internal server error`
+                });
             })
-    }))
+    }));
+
+    passport.use('officialJWT', new JWTStrategy(options, (jwt_payload, done) => {
+        DistrictOfficer.findOne({
+                username: jwt_payload.username
+            })
+            .then(user => {
+                if (user) {
+                    console.log('IN PASSPORT: user found');
+                    return done(null, user);
+                } else {
+                    ZonalOfficer.findOne({
+                            username: jwt_payload.username
+                        })
+                        .then(user => {
+                            if (user) {
+                                console.log('IN PASSPORT: user found');
+                                return done(null, user);
+                            } else {
+                                console.log('IN PASSPORT: user not found');
+                                return done(null, false, {
+                                    message: `Not authenticated user`
+                                });
+                            }
+                        });
+                }
+            })
+            .catch(err => {
+                console.log(`Error occured is internal : ${err}`);
+                return done(err, false, {
+                    message: `Internal server error`
+                });
+            });
+    }));
 };

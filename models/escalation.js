@@ -58,7 +58,7 @@ async function updateOfficer(idOfGrievance) {
         console.log(zonalOfficerObject);
 
         //updating escalation object
-        const currentTime = Date.now();
+        const currentTime = Date.now() + "";
 
         //sending email to district officer
         const officerEmail = zonalOfficerObject.email;
@@ -78,7 +78,7 @@ async function updateOfficer(idOfGrievance) {
                     '$position': 0
                 },
                 'escalationStack': {
-                    '$each': [currentTime + ""],
+                    '$each': [currentTime],
                     '$position': 0
                 }
             }

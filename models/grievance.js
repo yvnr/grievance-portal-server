@@ -138,10 +138,10 @@ module.exports.raiseGrievance = async (newGrievance) => {
         console.log(`${grievanceStatus}`);
 
         //calling function to check work in progress
-        const firstTimer = timer(grievance.id, 12000, null);
+        const firstTimer = timer(grievance.id, 120000, null);
 
         //calling function to check submitted/scrutinized
-        timer(grievance.id, 6000, firstTimer);
+        timer(grievance.id, 60000, firstTimer);
 
         //sending response
         const trueObject = {
@@ -154,3 +154,138 @@ module.exports.raiseGrievance = async (newGrievance) => {
         throw err;
     }
 };
+
+async function getGrievancesFunction(username) {
+    try {
+        const GrievanceStatus = require('./grievanceStatus');
+        const Escalation = require('./escalation');
+        const DistrictOfficer = require('./districtOfficer');
+        const ZonalOfficer = require('./zonalOfficer');
+
+        const grievancesObject = await Grievance.find({
+            username: username
+        }).exec();
+
+        const grievancesFinalObjectPromises = grievancesObject.map(async grievanceObject => {
+            const grievanceStatusObject = await GrievanceStatus.findOne({
+                grievanceId: grievanceObject.grievanceId
+            }).select('status').exec();
+
+            const escalationObject = await Escalation.findOne({
+                grievanceId: grievanceObject.grievanceId
+            }).select('officerHierarchyStack').exec();
+
+            const officerId = escalationObject.officerHierarchyStack[0];
+            console.log(`${officerId}`);
+
+            if (escalationObject.officerHierarchyStack.length == 1) {
+                const districtOfficerDetailsObject = await DistrictOfficer.findOne({
+                    username: officerId
+                }).select('fullName').exec();
+
+                const finalObject = {
+                    ...districtOfficerDetailsObject,
+                    ...grievanceStatusObject,
+                    ...grievanceObject,
+                    role: `districtOfficer`
+                };
+                return finalObject;
+
+            } else {
+                const zonalOfficerDetailsObject = await ZonalOfficer.findOne({
+                    username: officerId
+                }).select('fullName').exec();
+
+                const finalObject = {
+                    ...zonalOfficerDetailsObject,
+                    ...grievanceStatusObject,
+                    ...grievanceObject,
+                    role: `zonalOfficer`
+                };
+                return finalObject;
+            }
+
+        });
+
+        const grievancesFinalObject = await Promise.all(grievancesFinalObjectPromises);
+        return grievancesFinalObject;
+
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+module.exports.getGrievances = getGrievancesFunction;
+
+async function getGrievancesFromTokenFunction(token, tokenPassword) {
+    try {
+        const grievanceObject = await Grievance.findOne({
+            token: token
+        }).exec();
+
+        if (grievanceObject !== null) {
+            if (grievanceObject.tokenPassword === tokenPassword) {
+
+                const grievanceStatusObject = await GrievanceStatus.findOne({
+                    grievanceId: grievanceObject.grievanceId
+                }).select('status').exec();
+
+                const escalationObject = await Escalation.findOne({
+                    grievanceId: grievanceObject.grievanceId
+                }).select('officerHierarchyStack').exec();
+
+                const officerId = escalationObject.officerHierarchyStack[0];
+                console.log(`${officerId}`);
+
+                if (escalationObject.officerHierarchyStack.length == 1) {
+                    const districtOfficerDetailsObject = await DistrictOfficer.findOne({
+                        username: officerId
+                    }).select('fullName').exec();
+
+                    const finalObject = {
+                        ...districtOfficerDetailsObject,
+                        ...grievanceStatusObject,
+                        ...grievanceObject,
+                        role: `districtOfficer`
+                    };
+                    return {
+                        message: `successful`,
+                        grievance: finalObject
+                    }
+
+                } else {
+                    const zonalOfficerDetailsObject = await ZonalOfficer.findOne({
+                        username: officerId
+                    }).select('fullName').exec();
+
+                    const finalObject = {
+                        ...zonalOfficerDetailsObject,
+                        ...grievanceStatusObject,
+                        ...grievanceObject,
+                        role: `zonalOfficer`
+                    };
+                    return {
+                        message: `successful`,
+                        grievance: finalObject
+                    }
+
+                }
+            } else {
+                return {
+                    message: `invalid grievance password`,
+                    grievance: null
+                }
+            }
+        } else {
+            return {
+                message: `invalid grievance id`,
+                grievance: null
+            }
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+module.exports.getGrievancesFromToken = getGrievancesFromTokenFunction;

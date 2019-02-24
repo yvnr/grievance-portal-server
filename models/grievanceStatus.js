@@ -48,3 +48,100 @@ module.exports.setStatus = async (newStatus) => {
         throw err;
     }
 };
+
+updateStatusFunction = async (grievanceId, toChangeStatus) => {
+
+    const mail = require('./../mail');
+    const Grievance = require('./grievance');
+
+    const grievanceObject = await Grievance.findOne({
+        id: grievanceId
+    }).select('email').exec();
+
+    const currentTime = Date.now();
+
+    //send mail to user
+    const email = grievanceObject.email;
+    const subForUser = `Notification for your grievance`;
+    const msgForUser = `Your complaint has ${toChangeStatus}`;
+
+    mail(email, subForUser, msgForUser);
+
+    if (toChangeStatus === 'scrutinized') {
+        const updatedStatusObjectForScrutinized = await GrievanceStatus.findOneAndUpdate({
+            grievanceId: grievanceId
+        }, {
+            status: toChangeStatus,
+            scrutinizedTime: currentTime
+        }, {
+            new: true
+        });
+
+        return updatedStatusObjectForScrutinized;
+    } else if (toChangeStatus === 'accepted') {
+        const updatedStatusObjectForAccepted = await GrievanceStatus.findOneAndUpdate({
+            grievanceId: grievanceId
+        }, {
+            status: toChangeStatus,
+            inProgressTime: currentTime
+        }, {
+            new: true
+        });
+
+        return updatedStatusObjectForAccepted;
+    } else if (toChangeStatus === 'rejected') {
+        const updatedStatusObjectForRejected = await GrievanceStatus.findOneAndUpdate({
+            grievanceId: grievanceId
+        }, {
+            status: toChangeStatus,
+            rejectedTime: currentTime
+        }, {
+            new: true
+        });
+
+        return updatedStatusObjectForRejected;
+    } else if (toChangeStatus === 'resolved') {
+        const updatedStatusObjectForResolved = await GrievanceStatus.findOneAndUpdate({
+            grievanceId: grievanceId
+        }, {
+            status: toChangeStatus,
+            resolvedTime: currentTime
+        }, {
+            new: true
+        });
+
+        return updatedStatusObjectForResolved;
+    }
+};
+
+module.exports.updateStatus = updateStatusFunction;
+
+const cancelGrievanceFunction = async function (grievanceId) {
+    const GrievanceStatus = require('./grievanceStatus');
+
+    const grievanceStatusObject = await GrievanceStatus.findOne({
+        id: grievanceId
+    }).exec();
+
+    if (grievanceStatusObject.status === 'submitted') {
+        const currentTime = Date.now() + "";
+        const updatedGrievanceObject = await GrievanceStatus.findOneAndUpdate({
+            grievanceId: grievanceId
+        }, {
+            status: 'cancelled',
+            cancelledTime: currentTime
+        }, {
+            new: true
+        });
+        return {
+            object: updatedGrievanceObject,
+            message: `successful`
+        }
+    } else {
+        return {
+            message: `cant cancelled`
+        }
+    }
+}
+
+module.exports.cancelGrievance = cancelGrievanceFunction;

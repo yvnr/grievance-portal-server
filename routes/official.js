@@ -4,88 +4,29 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const Path = require('path');
 
 const DistrictOfficer = require('./../models/districtOfficer');
 const ZonalOfficer = require('./../models/zonalOfficer');
 const Escalation = require('./../models/escalation');
+const GrievanceStatus = require('./../models/grievanceStatus');
+const GrievanceResolution = require('./../models/grievanceResolution');
 
-//official login process
-router.route('/login')
-    .post((req, res) => {
-        passport.authenticate('officialLogin', (err, userFromAuth, info) => {
-            if (err) {
-                res.status(500).json({
-                    message: info.message
-                });
-            }
-            if (userFromAuth === false) {
-                console.log(`message: ${info.message}`);
-                res.status(500).json({
-                    message: info.message
-                });
-            } else {
-                //logging in user goes here
+//initialize multer
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './attachments');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${file.fieldname}-${Date.now()}${Path.extname(file.originalname)}`);
+    }
+});
 
-                console.log(`${userFromAuth.username}`);
-
-                if (info.role === `districtOfficer`) {
-
-                    DistrictOfficer.findOne({
-                            username: userFromAuth.username
-                        })
-                        .then(userDoc => {
-
-                            const token = jwt.sign({
-                                username: userDoc.username
-                            }, process.env.JWT_SECRET);
-
-                            res.status(200).json({
-                                auth: true,
-                                token: token,
-                                message: `user found and logged in`,
-                                user: {
-                                    username: userDoc.username,
-                                    fullName: userDoc.fullName,
-                                    email: userDoc.email,
-                                    phoneNumber: userDoc.phoneNumber,
-                                    role: `districtOfficer`
-                                }
-                            });
-                        });
-                } else {
-
-                    ZonalOfficer.findOne({
-                            username: userFromAuth.username
-                        })
-                        .then(userDoc => {
-
-                            const token = jwt.sign({
-                                username: userDoc.username
-                            }, process.env.JWT_SECRET);
-
-                            res.status(200).json({
-                                auth: true,
-                                token: token,
-                                message: `user found and logged in`,
-                                user: {
-                                    username: userDoc.username,
-                                    fullName: userDoc.fullName,
-                                    email: userDoc.email,
-                                    phoneNumber: userDoc.phoneNumber,
-                                    role: `zonalOfficer`
-                                }
-                            });
-                        })
-                        .catch(err => {
-                            console.log(`Error occured ${err}`);
-                            res.status(500).json({
-                                message: `unsuccessful`
-                            })
-                        });
-                }
-            }
-        })(req, res);
-    });
+//for multer
+const upload = multer({
+    storage
+});
 
 //official grievance view process
 router.route('/allocatedGrievances')
@@ -106,6 +47,63 @@ router.route('/allocatedGrievances')
                 res.status(500).json({
                     message: `unsuccesful`,
                     grievances: null
+                });
+            });
+    });
+
+router.route('/updateGrievanceStatus')
+    // passport.authenticate('jwt', {
+    //     session: false
+    // }),
+    .put((req, res) => {
+        GrievanceStatus.updateStatus(req.query.grievanceId, req.query.status)
+            .then(resultObject => {
+                console.log(resultObject);
+                res.status(200).json({
+                    message: `successful`
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: `unsuccessful`
+                });
+            });
+    })
+    // passport.authenticate('jwt', {
+    //     session: false
+    // }),
+    .post(upload.any(), (req, res) => {
+        GrievanceStatus.updateStatus(req.query.grievanceId, req.query.status)
+            .then(resultObject => {
+                console.log(resultObject);
+                let attachmentsPath = [];
+
+                //creating attachments path array
+                console.log(req.files);
+
+                req.files.map(file => {
+                    attachmentsPath.push(file.path);
+                });
+
+                const grievanceResolution = new GrievanceResolution({
+                    grievanceId: req.query.grievanceId,
+                    description: req.body.description,
+                    attachments: attachmentsPath
+                });
+
+                GrievanceResolution.createResolution(grievanceResolution)
+                    .then(grievanceResolutionObject => {
+                        console.log(grievanceResolutionObject);
+                        res.status(200).json({
+                            message: `successful`
+                        });
+                    });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: `unsuccessful`
                 });
             });
     });
