@@ -2,6 +2,8 @@
 
 const mongoose = require('mongoose');
 const Email = require('mongoose-type-email');
+const EnumValues = require('mongoose-enumvalues');
+
 const Enumeration = require('./enumeration');
 
 const DistrictOfficer = require('./districtOfficer');

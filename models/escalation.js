@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const EnumValues = require('mongoose-enumvalues');
 
 //for promises
 mongoose.Promise = global.Promise;
