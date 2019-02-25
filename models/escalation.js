@@ -114,13 +114,13 @@ async function getGrievancesFunction(officialUsername, status, role) {
         console.log(grievanceIds);
         const grievancesArrayPromise = grievanceIds.map(async grievanceIdObject => {
             try {
-                const grievanceStatus = await GrievanceStatus.findOne({
-                    grievanceId: grievanceIdObject.grievanceId
-                }).exec();
-
-                console.log(grievanceStatus);
-
                 if (role === 'districtOfficer') {
+                    const grievanceStatus = await GrievanceStatus.findOne({
+                        grievanceId: grievanceIdObject.grievanceId
+                    }).exec();
+
+                    console.log(grievanceStatus);
+
                     if (grievanceStatus.status === status) {
                         const grievance = await Grievance.findOne({
                             id: grievanceIdObject.grievanceId
@@ -129,21 +129,21 @@ async function getGrievancesFunction(officialUsername, status, role) {
                         console.log(grievance);
 
                         const finalGrievance = {
-                            id: grievanceIdObject.id,
-                            username: grievanceIdObject.phoneNumber,
-                            fullName: grievanceIdObject.fullName,
-                            country: grievanceIdObject.country,
-                            address: grievanceIdObject.address,
-                            gender: grievanceIdObject.gender,
-                            state: grievanceIdObject.state,
-                            district: grievanceIdObject,
-                            pincode: grievanceIdObject.pincode,
-                            email: grievanceIdObject.email,
-                            description: grievanceIdObject.description,
-                            department: grievanceIdObject.department,
-                            attachments: grievanceIdObject.attachments,
+                            id: grievance.id,
+                            username: grievance.username,
+                            fullName: grievance.fullName,
+                            country: grievance.country,
+                            address: grievance.address,
+                            gender: grievance.gender,
+                            state: grievance.state,
+                            district: grievance.district,
+                            pincode: grievance.pincode,
+                            email: grievance.email,
+                            description: grievance.description,
+                            department: grievance.department,
+                            attachments: grievance.attachments,
                             status: grievanceStatus.status,
-                            scrutinizedTime: grievanceStatus,
+                            scrutinizedTime: grievanceStatus.scrutinizedTime,
                             rejectedTime: grievanceStatus.rejectedTime,
                             resolvedTime: grievanceStatus.resolvedTime,
                             inprogressTime: grievanceStatus.inprogressTime,
@@ -152,8 +152,14 @@ async function getGrievancesFunction(officialUsername, status, role) {
 
                         return finalGrievance;
                     }
-                }else{
-                    if(grievanceStatus.status !== 'cancelled'){
+                } else {
+                    const grievanceStatus = await GrievanceStatus.findOne({
+                        grievanceId: grievanceIdObject.grievanceId
+                    }).exec();
+
+                    console.log(grievanceStatus);
+
+                    if (grievanceStatus.status !== 'cancelled') {
                         const grievance = await Grievance.findOne({
                             id: grievanceIdObject.grievanceId
                         }).exec();
@@ -161,21 +167,21 @@ async function getGrievancesFunction(officialUsername, status, role) {
                         console.log(grievance);
 
                         const finalGrievance = {
-                            id: grievanceIdObject.id,
-                            username: grievanceIdObject.phoneNumber,
-                            fullName: grievanceIdObject.fullName,
-                            country: grievanceIdObject.country,
-                            address: grievanceIdObject.address,
-                            gender: grievanceIdObject.gender,
-                            state: grievanceIdObject.state,
-                            district: grievanceIdObject,
-                            pincode: grievanceIdObject.pincode,
-                            email: grievanceIdObject.email,
-                            description: grievanceIdObject.description,
-                            department: grievanceIdObject.department,
-                            attachments: grievanceIdObject.attachments,
+                            id: grievance.id,
+                            username: grievance.username,
+                            fullName: grievance.fullName,
+                            country: grievance.country,
+                            address: grievance.address,
+                            gender: grievance.gender,
+                            state: grievance.state,
+                            district: grievance.district,
+                            pincode: grievance.pincode,
+                            email: grievance.email,
+                            description: grievance.description,
+                            department: grievance.department,
+                            attachments: grievance.attachments,
                             status: grievanceStatus.status,
-                            scrutinizedTime: grievanceStatus,
+                            scrutinizedTime: grievanceStatus.scrutinizedTime,
                             rejectedTime: grievanceStatus.rejectedTime,
                             resolvedTime: grievanceStatus.resolvedTime,
                             inprogressTime: grievanceStatus.inprogressTime,

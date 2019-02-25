@@ -10,7 +10,7 @@ const grievanceStatusSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: Enumeration.status,
+        enum: Enumeration.Status,
         required: true
     },
     scrutinizedTime: {
@@ -51,67 +51,70 @@ module.exports.setStatus = async (newStatus) => {
 };
 
 updateStatusFunction = async (grievanceId, toChangeStatus) => {
+    try {
+        const mail = require('./../mail');
+        const Grievance = require('./grievance');
 
-    const mail = require('./../mail');
-    const Grievance = require('./grievance');
+        const grievanceObject = await Grievance.findOne({
+            id: grievanceId
+        }).select('email').exec();
 
-    const grievanceObject = await Grievance.findOne({
-        id: grievanceId
-    }).select('email').exec();
+        const currentTime = Date.now();
 
-    const currentTime = Date.now();
+        //send mail to user
+        const email = grievanceObject.email;
+        const subForUser = `Notification for your grievance`;
+        const msgForUser = `Your complaint has been ${toChangeStatus}`;
 
-    //send mail to user
-    const email = grievanceObject.email;
-    const subForUser = `Notification for your grievance`;
-    const msgForUser = `Your complaint has been ${toChangeStatus}`;
+        mail(email, subForUser, msgForUser);
 
-    mail(email, subForUser, msgForUser);
+        if (toChangeStatus === 'scrutinized') {
+            const updatedStatusObjectForScrutinized = await GrievanceStatus.findOneAndUpdate({
+                grievanceId: grievanceId
+            }, {
+                status: toChangeStatus,
+                scrutinizedTime: currentTime
+            }, {
+                new: true
+            });
 
-    if (toChangeStatus === 'scrutinized') {
-        const updatedStatusObjectForScrutinized = await GrievanceStatus.findOneAndUpdate({
-            grievanceId: grievanceId
-        }, {
-            status: toChangeStatus,
-            scrutinizedTime: currentTime
-        }, {
-            new: true
-        });
+            return updatedStatusObjectForScrutinized;
+        } else if (toChangeStatus === 'accepted') {
+            const updatedStatusObjectForAccepted = await GrievanceStatus.findOneAndUpdate({
+                grievanceId: grievanceId
+            }, {
+                status: `work in progress`,
+                inprogressTime: currentTime
+            }, {
+                new: true
+            });
 
-        return updatedStatusObjectForScrutinized;
-    } else if (toChangeStatus === 'accepted') {
-        const updatedStatusObjectForAccepted = await GrievanceStatus.findOneAndUpdate({
-            grievanceId: grievanceId
-        }, {
-            status: toChangeStatus,
-            inProgressTime: currentTime
-        }, {
-            new: true
-        });
+            return updatedStatusObjectForAccepted;
+        } else if (toChangeStatus === 'rejected') {
+            const updatedStatusObjectForRejected = await GrievanceStatus.findOneAndUpdate({
+                grievanceId: grievanceId
+            }, {
+                status: toChangeStatus,
+                rejectedTime: currentTime
+            }, {
+                new: true
+            });
 
-        return updatedStatusObjectForAccepted;
-    } else if (toChangeStatus === 'rejected') {
-        const updatedStatusObjectForRejected = await GrievanceStatus.findOneAndUpdate({
-            grievanceId: grievanceId
-        }, {
-            status: toChangeStatus,
-            rejectedTime: currentTime
-        }, {
-            new: true
-        });
+            return updatedStatusObjectForRejected;
+        } else if (toChangeStatus === 'resolved') {
+            const updatedStatusObjectForResolved = await GrievanceStatus.findOneAndUpdate({
+                grievanceId: grievanceId
+            }, {
+                status: toChangeStatus,
+                resolvedTime: currentTime
+            }, {
+                new: true
+            });
 
-        return updatedStatusObjectForRejected;
-    } else if (toChangeStatus === 'resolved') {
-        const updatedStatusObjectForResolved = await GrievanceStatus.findOneAndUpdate({
-            grievanceId: grievanceId
-        }, {
-            status: toChangeStatus,
-            resolvedTime: currentTime
-        }, {
-            new: true
-        });
-
-        return updatedStatusObjectForResolved;
+            return updatedStatusObjectForResolved;
+        }
+    } catch (err) {
+        throw err;
     }
 };
 
@@ -146,3 +149,25 @@ const cancelGrievanceFunction = async function (grievanceId) {
 }
 
 module.exports.cancelGrievance = cancelGrievanceFunction;
+
+const grievancesDataFunction = async function () {
+    try {
+        const GrievanceStatus = require('./grievanceStatus');
+        const grievanceStatusTotalSubmited = await GrievanceStatus.count({}).exec();
+        const grievanceStatusTotalResolved = await GrievanceStatus.count({
+            status: 'resolved'
+        }).exec();
+        const stats = {
+            submitted: grievanceStatusTotalSubmited,
+            resolved: grievanceStatusTotalResolved
+
+        }
+        return stats;
+    } catch (err) {
+        console.log(err);
+        throw err;
+
+    }
+}
+
+module.exports.grievancesData = grievancesDataFunction;
