@@ -8,6 +8,9 @@ const dotenv = require('dotenv');
 const passport = require('passport');
 const path = require('path');
 
+//for cors request
+const cors = require('cors');
+
 // config dotenv to use process.env
 dotenv.config();
 
@@ -26,6 +29,9 @@ async function connectToDatabase() {
 };
 
 connectToDatabase().then(() => {
+
+    //for cross origin resource sharing
+    app.use(cors());
 
     //static
     app.use('/attachments', express.static(path.join(__dirname, './attachments')));

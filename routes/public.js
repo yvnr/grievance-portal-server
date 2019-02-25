@@ -40,14 +40,16 @@ router.route('/newGrievance')
         //check for middleware
         console.log(req.user.username);
 
+        const currentTime = Date.now()+"";
+
         //generating token object
         const tokenObject = {
-            token: req.user.username,
-            tokenPassword: req.user.username.substring(3, 7)
+            token: currentTime,
+            tokenPassword: currentTime.substring(3, 6) + req.user.username.substring(3, 6)
         };
 
         const grievance = new Grievance({
-            id: Date.now(),
+            id: currentTime,
             username: req.user.username,
             fullName: req.body.fullName,
             country: req.body.country,

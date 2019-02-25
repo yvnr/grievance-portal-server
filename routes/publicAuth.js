@@ -94,6 +94,7 @@ router.route('/login')
                     Public.findOne({
                             username: userFromAuth.username
                         })
+                        .select('-password')
                         .then(userDoc => {
 
                             const token = jwt.sign({
@@ -104,12 +105,7 @@ router.route('/login')
                                 auth: true,
                                 token: token,
                                 message: `user found and logged in`,
-                                user: {
-                                    username: userDoc.username,
-                                    fullName: userDoc.fullName,
-                                    email: userDoc.email,
-                                    phoneNumber: userDoc.phoneNumber
-                                }
+                                user: userDoc
                             });
                         })
                         .catch(err => {

@@ -167,12 +167,13 @@ async function getGrievancesFunction(username) {
         }).exec();
 
         const grievancesFinalObjectPromises = grievancesObject.map(async grievanceObject => {
+
             const grievanceStatusObject = await GrievanceStatus.findOne({
-                grievanceId: grievanceObject.grievanceId
+                grievanceId: grievanceObject.id
             }).select('status').exec();
 
             const escalationObject = await Escalation.findOne({
-                grievanceId: grievanceObject.grievanceId
+                grievanceId: grievanceObject.id
             }).select('officerHierarchyStack').exec();
 
             const officerId = escalationObject.officerHierarchyStack[0];
@@ -184,9 +185,22 @@ async function getGrievancesFunction(username) {
                 }).select('fullName').exec();
 
                 const finalObject = {
-                    ...districtOfficerDetailsObject,
-                    ...grievanceStatusObject,
-                    ...grievanceObject,
+                    officerName: districtOfficerDetailsObject.fullName,
+                    status: grievanceStatusObject.status,
+                    username: grievanceObject.username,
+                    fullName: grievanceObject.fullName,
+                    country: grievanceObject.country,
+                    address: grievanceObject.address,
+                    gender: grievanceObject.gender,
+                    state: grievanceObject.state,
+                    district: grievanceObject.state,
+                    district: grievanceObject.district,
+                    pincode: grievanceObject.pincode,
+                    email: grievanceObject.email,
+                    phoneNumber: grievanceObject.phoneNumber,
+                    description: grievanceObject.description,
+                    department: grievanceObject.department,
+                    token: grievanceObject.token,
                     role: `districtOfficer`
                 };
                 return finalObject;
@@ -197,9 +211,22 @@ async function getGrievancesFunction(username) {
                 }).select('fullName').exec();
 
                 const finalObject = {
-                    ...zonalOfficerDetailsObject,
-                    ...grievanceStatusObject,
-                    ...grievanceObject,
+                    officerName: zonalOfficerDetailsObject.fullName,
+                    status: grievanceStatusObject.status,
+                    username: grievanceObject.username,
+                    fullName: grievanceObject.fullName,
+                    country: grievanceObject.country,
+                    address: grievanceObject.address,
+                    gender: grievanceObject.gender,
+                    state: grievanceObject.state,
+                    district: grievanceObject.state,
+                    district: grievanceObject.district,
+                    pincode: grievanceObject.pincode,
+                    email: grievanceObject.email,
+                    phoneNumber: grievanceObject.phoneNumber,
+                    description: grievanceObject.description,
+                    department: grievanceObject.department,
+                    token: grievanceObject.token,
                     role: `zonalOfficer`
                 };
                 return finalObject;
@@ -219,21 +246,33 @@ async function getGrievancesFunction(username) {
 module.exports.getGrievances = getGrievancesFunction;
 
 async function getGrievancesFromTokenFunction(token, tokenPassword) {
+
+    const GrievanceStatus = require('./grievanceStatus');
+    const Escalation = require('./escalation');
+    const DistrictOfficer = require('./districtOfficer');
+    const ZonalOfficer = require('./zonalOfficer');
+
     try {
         const grievanceObject = await Grievance.findOne({
             token: token
         }).exec();
 
+        //console.log(grievanceObject);
+
         if (grievanceObject !== null) {
             if (grievanceObject.tokenPassword === tokenPassword) {
 
                 const grievanceStatusObject = await GrievanceStatus.findOne({
-                    grievanceId: grievanceObject.grievanceId
+                    grievanceId: grievanceObject.id
                 }).select('status').exec();
 
+                //console.log(grievanceStatusObject);
+
                 const escalationObject = await Escalation.findOne({
-                    grievanceId: grievanceObject.grievanceId
+                    grievanceId: grievanceObject.id
                 }).select('officerHierarchyStack').exec();
+
+                //console.log(escalationObject);
 
                 const officerId = escalationObject.officerHierarchyStack[0];
                 console.log(`${officerId}`);
@@ -244,9 +283,22 @@ async function getGrievancesFromTokenFunction(token, tokenPassword) {
                     }).select('fullName').exec();
 
                     const finalObject = {
-                        ...districtOfficerDetailsObject,
-                        ...grievanceStatusObject,
-                        ...grievanceObject,
+                        officerName: districtOfficerDetailsObject.fullName,
+                        status: grievanceStatusObject.status,
+                        username: grievanceObject.username,
+                        fullName: grievanceObject.fullName,
+                        country: grievanceObject.country,
+                        address: grievanceObject.address,
+                        gender: grievanceObject.gender,
+                        state: grievanceObject.state,
+                        district: grievanceObject.state,
+                        district: grievanceObject.district,
+                        pincode: grievanceObject.pincode,
+                        email: grievanceObject.email,
+                        phoneNumber: grievanceObject.phoneNumber,
+                        description: grievanceObject.description,
+                        department: grievanceObject.department,
+                        token: grievanceObject.token,
                         role: `districtOfficer`
                     };
                     return {
@@ -260,9 +312,22 @@ async function getGrievancesFromTokenFunction(token, tokenPassword) {
                     }).select('fullName').exec();
 
                     const finalObject = {
-                        ...zonalOfficerDetailsObject,
-                        ...grievanceStatusObject,
-                        ...grievanceObject,
+                        officerName: zonalOfficerDetailsObject.fullName,
+                        status: grievanceStatusObject.status,
+                        username: grievanceObject.username,
+                        fullName: grievanceObject.fullName,
+                        country: grievanceObject.country,
+                        address: grievanceObject.address,
+                        gender: grievanceObject.gender,
+                        state: grievanceObject.state,
+                        district: grievanceObject.state,
+                        district: grievanceObject.district,
+                        pincode: grievanceObject.pincode,
+                        email: grievanceObject.email,
+                        phoneNumber: grievanceObject.phoneNumber,
+                        description: grievanceObject.description,
+                        department: grievanceObject.department,
+                        token: grievanceObject.token,
                         role: `zonalOfficer`
                     };
                     return {
