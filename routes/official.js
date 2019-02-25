@@ -31,7 +31,7 @@ const upload = multer({
 //official grievance view process
 router.route('/allocatedGrievances')
     .get((req, res) => {
-        Escalation.getGrievances(req.user.username)
+        Escalation.getGrievances(req.user.username, req.query.status, req.query.role)
             .then(grievances => {
                 console.log(grievances);
                 res.status(200).json({

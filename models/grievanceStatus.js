@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const EnumValues = require('mongoose-enumvalues');
 
 const Enumeration = require('./enumeration');
 

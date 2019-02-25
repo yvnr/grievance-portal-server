@@ -102,7 +102,7 @@ async function updateOfficer(idOfGrievance) {
 
 module.exports.updateOfficer = updateOfficer;
 
-async function getGrievancesFunction(officialUsername) {
+async function getGrievancesFunction(officialUsername, status, role) {
     try {
         const Grievance = require('./grievance');
         const GrievanceStatus = require('./grievanceStatus');
@@ -116,19 +116,76 @@ async function getGrievancesFunction(officialUsername) {
             try {
                 const grievanceStatus = await GrievanceStatus.findOne({
                     grievanceId: grievanceIdObject.grievanceId
-                }).select('status').exec();
+                }).exec();
 
                 console.log(grievanceStatus);
 
-                if (grievanceStatus.status !== 'cancelled') {
-                    const grievance = await Grievance.findOne({
-                        id: grievanceIdObject.grievanceId
-                    }).exec();
+                if (role === 'districtOfficer') {
+                    if (grievanceStatus.status === status) {
+                        const grievance = await Grievance.findOne({
+                            id: grievanceIdObject.grievanceId
+                        }).exec();
 
-                    console.log(grievance);
+                        console.log(grievance);
 
-                    return grievance;
+                        const finalGrievance = {
+                            id: grievanceIdObject.id,
+                            username: grievanceIdObject.phoneNumber,
+                            fullName: grievanceIdObject.fullName,
+                            country: grievanceIdObject.country,
+                            address: grievanceIdObject.address,
+                            gender: grievanceIdObject.gender,
+                            state: grievanceIdObject.state,
+                            district: grievanceIdObject,
+                            pincode: grievanceIdObject.pincode,
+                            email: grievanceIdObject.email,
+                            description: grievanceIdObject.description,
+                            department: grievanceIdObject.department,
+                            attachments: grievanceIdObject.attachments,
+                            status: grievanceStatus.status,
+                            scrutinizedTime: grievanceStatus,
+                            rejectedTime: grievanceStatus.rejectedTime,
+                            resolvedTime: grievanceStatus.resolvedTime,
+                            inprogressTime: grievanceStatus.inprogressTime,
+                            submittedTime: grievanceStatus.submittedTime
+                        }
+
+                        return finalGrievance;
+                    }
+                }else{
+                    if(grievanceStatus.status !== 'cancelled'){
+                        const grievance = await Grievance.findOne({
+                            id: grievanceIdObject.grievanceId
+                        }).exec();
+
+                        console.log(grievance);
+
+                        const finalGrievance = {
+                            id: grievanceIdObject.id,
+                            username: grievanceIdObject.phoneNumber,
+                            fullName: grievanceIdObject.fullName,
+                            country: grievanceIdObject.country,
+                            address: grievanceIdObject.address,
+                            gender: grievanceIdObject.gender,
+                            state: grievanceIdObject.state,
+                            district: grievanceIdObject,
+                            pincode: grievanceIdObject.pincode,
+                            email: grievanceIdObject.email,
+                            description: grievanceIdObject.description,
+                            department: grievanceIdObject.department,
+                            attachments: grievanceIdObject.attachments,
+                            status: grievanceStatus.status,
+                            scrutinizedTime: grievanceStatus,
+                            rejectedTime: grievanceStatus.rejectedTime,
+                            resolvedTime: grievanceStatus.resolvedTime,
+                            inprogressTime: grievanceStatus.inprogressTime,
+                            submittedTime: grievanceStatus.submittedTime
+                        }
+
+                        return finalGrievance;
+                    }
                 }
+
             } catch (err) {
                 throw err;
             }

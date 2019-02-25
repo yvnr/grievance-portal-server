@@ -140,10 +140,10 @@ module.exports.raiseGrievance = async (newGrievance) => {
         console.log(`${grievanceStatus}`);
 
         //calling function to check work in progress
-        const firstTimer = timer(grievance.id, 240000, null);
+        const firstTimer = timer(grievance.id, 480000, null);
 
         //calling function to check submitted/scrutinized
-        timer(grievance.id, 120000, firstTimer);
+        timer(grievance.id, 240000, firstTimer);
 
         //sending response
         const trueObject = {

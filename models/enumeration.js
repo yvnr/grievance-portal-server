@@ -38,9 +38,9 @@ const Status = ['submitted',
     'cancelled'
 ];
 
-module.exports = Gender;
-module.exports = State;
-module.exports = Zone;
-module.exports = District;
-module.exports = Pincode;
-module.exports = Status;
+module.exports.Gender = Gender;
+module.exports.State = State;
+module.exports.Zone = Zone;
+module.exports.District = District;
+module.exports.Pincode = Pincode;
+module.exports.Status = Status;
