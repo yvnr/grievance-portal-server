@@ -68,19 +68,21 @@ router.route('/updateGrievanceStatus')
         GrievanceStatus.updateStatus(req.query.grievanceId, req.query.status)
             .then(resultObject => {
                 console.log(resultObject);
-                let attachmentsPath = [];
+
+                //add later..
+                // let attachmentsPath = [];
 
                 //creating attachments path array
-                console.log(req.files);
+                // console.log(req.files);
 
-                req.files.map(file => {
-                    attachmentsPath.push(file.path);
-                });
+                // req.files.map(file => {
+                //     attachmentsPath.push(file.path);
+                // });
 
                 const grievanceResolution = new GrievanceResolution({
                     grievanceId: req.query.grievanceId,
                     description: req.body.description,
-                    attachments: attachmentsPath
+                    //attachments: attachmentsPath
                 });
 
                 GrievanceResolution.createResolution(grievanceResolution)

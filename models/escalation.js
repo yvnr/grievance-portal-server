@@ -128,6 +128,31 @@ async function getGrievancesFunction(officialUsername, status, role) {
 
                         console.log(grievance);
 
+                        if (typeof grievanceStatus.submittedTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.submittedTime));
+                            grievanceStatus.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
+
+                        if (typeof grievanceStatus.scrutinizedTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.scrutinizedTime));
+                            grievanceStatus.scrutinizedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
+
+                        if (typeof grievanceStatus.rejectedTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.rejectedTime));
+                            grievanceStatus.rejectedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
+
+                        if (typeof grievanceStatus.resolvedTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.resolvedTime));
+                            grievanceStatus.resolvedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
+
+                        if (typeof grievanceStatus.inprogressTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.inprogressTime));
+                            grievanceStatus.inprogressTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
+
                         const finalGrievance = {
                             id: grievance.id,
                             username: grievance.username,
@@ -165,6 +190,31 @@ async function getGrievancesFunction(officialUsername, status, role) {
                         }).exec();
 
                         console.log(grievance);
+
+                        if (typeof grievanceStatus.submittedTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.submittedTime));
+                            grievanceStatus.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
+
+                        if (typeof grievanceStatus.scrutinizedTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.scrutinizedTime));
+                            grievanceStatus.scrutinizedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
+
+                        if (typeof grievanceStatus.rejectedTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.rejectedTime));
+                            grievanceStatus.rejectedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
+
+                        if (typeof grievanceStatus.resolvedTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.resolvedTime));
+                            grievanceStatus.resolvedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
+
+                        if (typeof grievanceStatus.inprogressTime !== `undefined`) {
+                            const date = new Date(Number(grievanceStatus.inprogressTime));
+                            grievanceStatus.inprogressTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                        }
 
                         const finalGrievance = {
                             id: grievance.id,
