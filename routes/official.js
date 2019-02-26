@@ -103,7 +103,7 @@ router.route('/updateGrievanceStatus')
 
 router.route('/zonalGrievances')
     .get((req, res) => {
-        ZonalOfficer.getGrievancesForZonalOfficer(req.user.username)
+        ZonalOfficer.getGrievancesForZonalOfficers(req.user.username)
             .then(grievances => {
                 console.log(grievances);
                 res.status(200).json({

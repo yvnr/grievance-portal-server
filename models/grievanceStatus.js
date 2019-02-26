@@ -120,17 +120,16 @@ updateStatusFunction = async (grievanceId, toChangeStatus) => {
 
 module.exports.updateStatus = updateStatusFunction;
 
-const cancelGrievanceFunction = async function (grievanceId) {
-    const GrievanceStatus = require('./grievanceStatus');
+const cancelGrievanceFunction = async function (token) {
 
     const grievanceStatusObject = await GrievanceStatus.findOne({
-        id: grievanceId
+        grievanceId: token
     }).exec();
 
     if (grievanceStatusObject.status === 'submitted') {
         const currentTime = Date.now() + "";
         const updatedGrievanceObject = await GrievanceStatus.findOneAndUpdate({
-            grievanceId: grievanceId
+            grievanceId: token
         }, {
             status: 'cancelled',
             cancelledTime: currentTime

@@ -47,6 +47,7 @@ async function getGrievancesForZonalOfficersFunction(username) {
     const Grievance = require('./grievance');
     const GrievanceStatus = require('./grievanceStatus');
     const Escalation = require('./escalation');
+    const DistrictOfficer = require('./districtOfficer');
 
     const zonnalOfficerObject = await ZonalOfficer.findOne({
         username: username
@@ -61,32 +62,54 @@ async function getGrievancesForZonalOfficersFunction(username) {
             district: districtObject.districtName
         }).exec();
 
-        const grievancesObjectPromise = grievancesObject.map(async grievanceObject => {
+        const grievancesObjectPromise = await grievancesObject.map(async grievanceObject => {
             const grievanceStatusObject = await GrievanceStatus.findOne({
-                grievanceId: grievanceObject.grievanceId
+                grievanceId: grievanceObject.id
             }).select('status').exec();
 
-            const escalationObject = await Escalation.findOne({
-                grievanceId: grievanceObject.grievanceId
-            }).select('officerHierarchyStack').exec();
+            if (grievanceStatusObject.status !== `cancelled`) {
+                const escalationObject = await Escalation.findOne({
+                    grievanceId: grievanceObject.id
+                }).select('officerHierarchyStack').exec();
 
-            const officerId = escalationObject.officerHierarchyStack[0];
-            console.log(`${officerId}`);
+                let index = 0;
+                if (escalationObject.officerHierarchyStack.length === 2) {
+                    index = 1;
+                }
 
-            const districtOfficerDetailsObject = await DistrictOfficer.findOne({
-                username: officerId
-            }).select('fullName email phoneNumber').exec();
+                const officerId = escalationObject.officerHierarchyStack[index];
+                console.log(`${officerId}`);
 
-            const finalObject = {
-                ...districtOfficerDetailsObject,
-                ...grievanceStatusObject,
-                ...grievanceObject,
-            };
-            return finalObject;
+                const districtOfficerDetailsObject = await DistrictOfficer.findOne({
+                    username: officerId
+                }).select('fullName email phoneNumber').exec();
+
+                const finalObject = {
+                    id: grievanceObject.id,
+                    username: grievanceObject.username,
+                    fullName: grievanceObject.fullName,
+                    country: grievanceObject.country,
+                    address: grievanceObject.address,
+                    gender: grievanceObject.gender,
+                    state: grievanceObject.state,
+                    district: grievanceObject.district,
+                    pincode: grievanceObject.pincode,
+                    email: grievanceObject.email,
+                    description: grievanceObject.description,
+                    department: grievanceObject.department,
+                    attachments: grievanceObject.attachments,
+                    status: grievanceStatusObject.status,
+                    officerFullName: districtOfficerDetailsObject.fullName,
+                    officerEmail: districtOfficerDetailsObject.email,
+                    officerPhoneNumber: districtOfficerDetailsObject.phoneNumber
+                };
+                return finalObject;
+            }
+
         });
 
-        const grievancesObject = await Promise.all(grievancesObjectPromise);
-        return grievancesObject;
+        const grievancesObjectForTotalZone = await Promise.all(grievancesObjectPromise);
+        return grievancesObjectForTotalZone;
     });
 
     const grievancesFinalObject = await Promise.all(grievancesFinalObjectPromise);
