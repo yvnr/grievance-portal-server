@@ -12,17 +12,13 @@ router.route('/login')
         passport.authenticate('officialLogin', (err, userFromAuth, info) => {
             if (err) {
                 res.status(500).json({
-                    errors: {
-                        message: info.message
-                    }
+                    message: info.message
                 });
             }
             if (userFromAuth === false) {
                 console.log(`message: ${info.message}`);
                 res.status(500).json({
-                    errors: {
-                        message: info.message
-                    }
+                    message: info.message
                 });
             } else {
                 //logging in user goes here
@@ -81,9 +77,7 @@ router.route('/login')
                         .catch(err => {
                             console.log(`Error occured ${err}`);
                             res.status(500).json({
-                                errors: {
-                                    message: `Internal server error, please try again after sometime.`
-                                }
+                                message: `Internal server error, please try again after sometime.`
                             })
                         });
                 }
