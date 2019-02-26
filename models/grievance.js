@@ -172,7 +172,7 @@ async function getGrievancesFunction(username) {
 
             const grievanceStatusObject = await GrievanceStatus.findOne({
                 grievanceId: grievanceObject.id
-            }).select('status').exec();
+            }).exec();
 
             const escalationObject = await Escalation.findOne({
                 grievanceId: grievanceObject.id
