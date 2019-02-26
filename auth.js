@@ -108,7 +108,7 @@ module.exports = () => {
                         .then(user => {
                             if (user == null) {
                                 return done(null, false, {
-                                    message: `username is not valid`
+                                    message: `username or password is incorrect.`
                                 });
                             } else {
                                 console.log(`typed password : ${password}\nhashed password : ${user.password}`);
@@ -120,7 +120,7 @@ module.exports = () => {
                                     });
                                 } else {
                                     return done(null, false, {
-                                        message: `password is incorect`
+                                        message: `username or password is incorrect.`
                                     });
                                 }
                             }
@@ -131,11 +131,11 @@ module.exports = () => {
                         console.log(`user authenticated`);
                         return done(null, user, {
                             role: `districtOfficer`,
-                            message: `successful`
+                            message: `successful.`
                         });
                     } else {
                         return done(null, false, {
-                            message: `password is incorect`
+                            message: `username or password is incorrect.`
                         });
                     }
                 }
@@ -143,7 +143,7 @@ module.exports = () => {
             .catch(err => {
                 console.log(`Error occured ${err}`);
                 return (err, false, {
-                    message: `unsuccessful`
+                    message: `Internal server error, please try again after sometime.`
                 });
             });
     }));

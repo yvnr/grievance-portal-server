@@ -16,7 +16,8 @@ router.route('/status')
             .catch(err => {
                 console.log(err);
                 res.status(500).json({
-                    message: `unsuccessful`
+                    message: `Internal server error, please try again after sometime.`,
+                    grievance: {}
                 });
             });
     });

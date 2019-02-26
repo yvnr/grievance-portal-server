@@ -12,7 +12,7 @@ const resolutionSchema = new mongoose.Schema({
     },
     attachments: [{
         type: String,
-        //required: true
+        required: true
     }]
 }, {
     timestamps: true

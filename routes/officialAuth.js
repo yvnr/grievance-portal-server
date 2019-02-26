@@ -12,13 +12,17 @@ router.route('/login')
         passport.authenticate('officialLogin', (err, userFromAuth, info) => {
             if (err) {
                 res.status(500).json({
-                    message: info.message
+                    errors: {
+                        message: info.message
+                    }
                 });
             }
             if (userFromAuth === false) {
                 console.log(`message: ${info.message}`);
                 res.status(500).json({
-                    message: info.message
+                    errors: {
+                        message: info.message
+                    }
                 });
             } else {
                 //logging in user goes here
@@ -50,6 +54,7 @@ router.route('/login')
                             });
                         });
                 } else {
+                    //inserted bug here
 
                     ZonalOfficer.findOne({
                             username: userFromAuth.username
@@ -76,7 +81,9 @@ router.route('/login')
                         .catch(err => {
                             console.log(`Error occured ${err}`);
                             res.status(500).json({
-                                message: `unsuccessful`
+                                errors: {
+                                    message: `Internal server error, please try again after sometime.`
+                                }
                             })
                         });
                 }

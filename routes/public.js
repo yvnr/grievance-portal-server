@@ -40,7 +40,7 @@ router.route('/newGrievance')
         //check for middleware
         console.log(req.user.username);
 
-        const currentTime = Date.now()+"";
+        const currentTime = Date.now() + "";
 
         //generating token object
         const tokenObject = {
@@ -76,7 +76,7 @@ router.route('/newGrievance')
             })
             .catch(err => {
                 res.status(500).json({
-                    message: `unsuccessful`
+                    message: `Internal server error, please try again after sometime.`
                 });
             });
     });
@@ -93,7 +93,7 @@ router.route('/cancelGrievance')
             .catch(err => {
                 console.log(err);
                 res.status(500).json({
-                    message: `unsuccessful`
+                    message: `Internal server error, please try again after sometime.`
                 });
             });
     });
@@ -110,7 +110,8 @@ router.route('/submittedGrievances')
             })
             .catch(err => {
                 res.status(500).json({
-                    message: `unsuccessful`
+                    message: `Internal server error, please try again after sometime.`,
+                    grievances: []
                 });
             });
     });

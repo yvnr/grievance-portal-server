@@ -143,7 +143,7 @@ module.exports.raiseGrievance = async (newGrievance) => {
         const firstTimer = timer(grievance.id, 480000, null);
 
         //calling function to check submitted/scrutinized
-        timer(grievance.id, 240000, firstTimer);
+        timer(grievance.id, 1800000, firstTimer);
 
         //sending response
         const trueObject = {
@@ -248,18 +248,16 @@ async function getGrievancesFunction(username) {
 module.exports.getGrievances = getGrievancesFunction;
 
 async function getGrievancesFromTokenFunction(token, tokenPassword) {
-
-    const GrievanceStatus = require('./grievanceStatus');
-    const Escalation = require('./escalation');
-    const DistrictOfficer = require('./districtOfficer');
-    const ZonalOfficer = require('./zonalOfficer');
-
     try {
+
+        const GrievanceStatus = require('./grievanceStatus');
+        const Escalation = require('./escalation');
+        const DistrictOfficer = require('./districtOfficer');
+        const ZonalOfficer = require('./zonalOfficer');
+
         const grievanceObject = await Grievance.findOne({
             token: token
         }).exec();
-
-        //console.log(grievanceObject);
 
         if (grievanceObject !== null) {
             if (grievanceObject.tokenPassword === tokenPassword) {
@@ -268,13 +266,9 @@ async function getGrievancesFromTokenFunction(token, tokenPassword) {
                     grievanceId: grievanceObject.id
                 }).select('status').exec();
 
-                //console.log(grievanceStatusObject);
-
                 const escalationObject = await Escalation.findOne({
                     grievanceId: grievanceObject.id
                 }).select('officerHierarchyStack').exec();
-
-                //console.log(escalationObject);
 
                 const officerId = escalationObject.officerHierarchyStack[0];
                 console.log(`${officerId}`);
@@ -340,14 +334,14 @@ async function getGrievancesFromTokenFunction(token, tokenPassword) {
                 }
             } else {
                 return {
-                    message: `invalid grievance password`,
-                    grievance: null
+                    message: `tokenId or tokenPassword is incorrect.`,
+                    grievance: {}
                 }
             }
         } else {
             return {
-                message: `invalid grievance id`,
-                grievance: null
+                message: `tokenId or tokenPassword is incorrect.`,
+                grievance: {}
             }
         }
     } catch (err) {

@@ -16,11 +16,10 @@ router.route('/')
             })
             .catch(err => {
                 res.status(400).json({
-                    message: 'unsuccesful',
-                    stats: null
+                    message: 'Internal server error, please try again after sometime.',
+                    stats: {}
                 });
             });
-
     });
 
 module.exports = router;

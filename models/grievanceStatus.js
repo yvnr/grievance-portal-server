@@ -121,12 +121,11 @@ updateStatusFunction = async (grievanceId, toChangeStatus) => {
 module.exports.updateStatus = updateStatusFunction;
 
 const cancelGrievanceFunction = async function (token) {
+    try {
+        const grievanceStatusObject = await GrievanceStatus.findOne({
+            grievanceId: token
+        }).exec();
 
-    const grievanceStatusObject = await GrievanceStatus.findOne({
-        grievanceId: token
-    }).exec();
-
-    if (grievanceStatusObject.status === 'submitted') {
         const currentTime = Date.now() + "";
         const updatedGrievanceObject = await GrievanceStatus.findOneAndUpdate({
             grievanceId: token
@@ -140,10 +139,9 @@ const cancelGrievanceFunction = async function (token) {
             object: updatedGrievanceObject,
             message: `successful`
         }
-    } else {
-        return {
-            message: `cant cancelled`
-        }
+
+    } catch (err) {
+        throw err;
     }
 }
 
@@ -165,7 +163,6 @@ const grievancesDataFunction = async function () {
     } catch (err) {
         console.log(err);
         throw err;
-
     }
 }
 

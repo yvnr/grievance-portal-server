@@ -248,8 +248,17 @@ async function getGrievancesFunction(officialUsername, status, role) {
         });
 
         const grievancesArrayObject = await Promise.all(grievancesArrayPromise);
+
+        function isValid(value) {
+            return (typeof value !== `undefined`);
+        }
+
+        const grievancesArrayObjectAfterFilter = await grievancesArrayObject.filter(isValid);
+
+        console.log(grievancesArrayObjectAfterFilter);
+
         //returing grievances
-        return grievancesArrayObject;
+        return grievancesArrayObjectAfterFilter;
 
     } catch (err) {
         throw err;
