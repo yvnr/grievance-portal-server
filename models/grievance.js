@@ -186,6 +186,9 @@ async function getGrievancesFunction(username) {
                     username: officerId
                 }).select('fullName').exec();
 
+                const date = new Date(Number(grievanceStatusObject.submittedTime));
+                grievanceStatusObject.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+
                 const finalObject = {
                     officerName: districtOfficerDetailsObject.fullName,
                     status: grievanceStatusObject.status,
@@ -203,7 +206,8 @@ async function getGrievancesFunction(username) {
                     description: grievanceObject.description,
                     department: grievanceObject.department,
                     token: grievanceObject.token,
-                    role: `districtOfficer`
+                    role: `districtOfficer`,
+                    submittedTime: grievanceStatusObject.submittedTime
                 };
                 return finalObject;
 
