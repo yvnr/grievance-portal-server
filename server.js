@@ -18,7 +18,7 @@ const app = express();
 
 async function connectToDatabase() {
     try {
-        const connection = await mongoose.connect('mongodb://localhost:27017/dippGrievanceDB', {
+        const connection = await mongoose.connect('mongodb:+srv//DIPPHakunaMatatadbAdmin:beanbag@123@clusterdipp-gsdin.mongodb.net/test?retryWrites=true', {
             useNewUrlParser: true
         });
         console.log(`connection established successfully`);
@@ -125,7 +125,7 @@ connectToDatabase().then(() => {
 
 });
 
-app.listen(8080, () => {
+app.listen(process.env.PORT || 8080, () => {
     console.log('Listening on port 8080...');
 });
 
