@@ -97,6 +97,9 @@ module.exports = Grievance = mongoose.model('grievance', grievanceSchema);
 //for creating new grievance
 module.exports.raiseGrievance = async (newGrievance) => {
     try {
+
+        const DistrictOfficer = require('./districtOfficer');
+
         const grievance = await newGrievance.save();
         console.log(`${grievance}`);
 

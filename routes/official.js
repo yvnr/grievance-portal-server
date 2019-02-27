@@ -30,7 +30,7 @@ const bucket = cStorage.bucket('gs://dipp-d6ff8.appspot.com/');
 const storage = multer.memoryStorage();
 //for multer
 const upload = multer({
-    storage,
+    storage: storage,
     limits: {
         fileSize: 5 * 1024 * 1024,
     }
@@ -72,37 +72,39 @@ router.route('/updateGrievanceStatus')
                 });
             });
     })
-    .post(upload.any(), (req, res) => {
+    .post(upload.single('attachments'), (req, res) => {
         GrievanceStatus.updateStatus(req.query.grievanceId, req.query.status)
-            .then(resultObject => {
-                console.log(resultObject);
+            .then(async resultObject => {
+                try {
+                    console.log(resultObject);
 
-                let attachmentsPath = [];
+                    let attachmentsPath = [];
 
-                //creating attachments path array
-                console.log(req.files);
+                    //creating attachments path array
+                    console.log(req.file);
 
-                req.files.map(file => {
+                    //changed from array to single object
+                    // const dummyPromise = req.files.map(file => {
                     // attachmentsPath.push(file.path);
-                    uploadFileToCloud(file)
-                        .then( path => {
-                            attachmentsPath.push(path);
-                        });
-                });
+                    const path = await uploadFileToCloud(req.file);
+                    attachmentsPath.push(path);
 
-                const grievanceResolution = new GrievanceResolution({
-                    grievanceId: req.query.grievanceId,
-                    description: req.body.description,
-                    attachments: attachmentsPath
-                });
-
-                GrievanceResolution.createResolution(grievanceResolution)
-                    .then(grievanceResolutionObject => {
-                        console.log(grievanceResolutionObject);
-                        res.status(200).json({
-                            message: `successful`
-                        });
+                    const grievanceResolution = new GrievanceResolution({
+                        grievanceId: req.query.grievanceId,
+                        description: req.body.description,
+                        attachments: attachmentsPath
                     });
+
+                    GrievanceResolution.createResolution(grievanceResolution)
+                        .then(grievanceResolutionObject => {
+                            console.log(grievanceResolutionObject);
+                            res.status(200).json({
+                                message: `successful`
+                            });
+                        });
+                } catch (err) {
+                    throw err;
+                }
             })
             .catch(err => {
                 console.log(err);
@@ -131,14 +133,15 @@ router.route('/zonalGrievances')
             });
     });
 
-const uploadFileToCloud =  async (file) => {
-    try {
-       const fileName = `${file.fieldname}-${Date.now()}${Path.extname(file.originalname)}`;
-       const fileUpload = bucket.file(fileName);
+const uploadFileToCloud = (file) => {
+    let prom = new Promise((resolve, reject) => {
+        console.log(file);
+        const fileName = `attachments-${Date.now()}${Path.extname(file.originalname)}`;
+        const fileUpload = bucket.file(fileName);
 
-       const blobStream = fileUpload.createWriteStream({
+        const blobStream = fileUpload.createWriteStream({
             metadata: {
-            contentType: file.mimetype
+                contentType: file.mimetype
             }
         });
 
@@ -147,15 +150,13 @@ const uploadFileToCloud =  async (file) => {
         });
 
         blobStream.on('finish', () => {
-            const url = format(`https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`);
-            return url;
+            const url = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${fileUpload.name}?alt=media`;
+            resolve(url);
         });
 
         blobStream.end(file.buffer);
-    }
-    catch(err) {
-        throw new Error(err);
-    }
+    });
+    return prom;
 }
 
 module.exports = router;
