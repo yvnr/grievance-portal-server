@@ -9,11 +9,13 @@
   "author": "freesr",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/storage": "^2.4.2",
     "bcrypt": "^3.0.4",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "firebase": "^5.8.4",
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.4.14",
     "mongoose-enumvalues": "0.0.3",
@@ -29,6 +31,6 @@
     }
   },
   "engines": {
-    "node":"10.x"
+    "node": "10.x"
   }
 }

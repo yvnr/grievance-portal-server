@@ -18,13 +18,13 @@ const app = express();
 
 async function connectToDatabase() {
     try {
-        const connection = await mongoose.connect('mongodb:+srv//DIPPHakunaMatatadbAdmin:beanbag@123@clusterdipp-gsdin.mongodb.net/test?retryWrites=true', {
+        const connection = await mongoose.connect('mongodb+srv://DIPPHakunaMatatadbAdmin:beanbag@123@clusterdipp-gsdin.mongodb.net/test?retryWrites=true', {
             useNewUrlParser: true
         });
         console.log(`connection established successfully`);
         return connection;
     } catch (err) {
-        console.log(`connection was unsucessfull`);
+        console.log(`connection was unsucessfull ${err}`);
     }
 };
 

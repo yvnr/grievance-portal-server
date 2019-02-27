@@ -13,19 +13,27 @@ const Escalation = require('./../models/escalation');
 const GrievanceStatus = require('./../models/grievanceStatus');
 const GrievanceResolution = require('./../models/grievanceResolution');
 
-//initialize multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './attachments');
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${file.fieldname}-${Date.now()}${Path.extname(file.originalname)}`);
-    }
+// initialize cloud storage
+const firebase = require('firebase');
+const gcloud = require('@google-cloud/storage');
+
+console.log(gcloud);
+
+const cStorage = new gcloud.Storage({
+    projectId: 'dipp-d6ff8',
+    keyFilename: './../dipp-d6ff8-firebase-adminsdk-jinqe-8423b0cc67.json'
 });
 
+const bucket = cStorage.bucket('gs://dipp-d6ff8.appspot.com/');
+
+//initialize multer
+const storage = multer.memoryStorage();
 //for multer
 const upload = multer({
-    storage
+    storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+    }
 });
 
 //official grievance view process
@@ -75,7 +83,11 @@ router.route('/updateGrievanceStatus')
                 console.log(req.files);
 
                 req.files.map(file => {
-                    attachmentsPath.push(file.path);
+                    // attachmentsPath.push(file.path);
+                    uploadFileToCloud(file)
+                        .then( path => {
+                            attachmentsPath.push(path);
+                        });
                 });
 
                 const grievanceResolution = new GrievanceResolution({
@@ -118,5 +130,32 @@ router.route('/zonalGrievances')
                 });
             });
     });
+
+const uploadFileToCloud =  async (file) => {
+    try {
+       const fileName = `${file.fieldname}-${Date.now()}${Path.extname(file.originalname)}`;
+       const fileUpload = bucket.file(fileName);
+
+       const blobStream = fileUpload.createWriteStream({
+            metadata: {
+            contentType: file.mimetype
+            }
+        });
+
+        blobStream.on('error', (err) => {
+            throw new Error(err);
+        });
+
+        blobStream.on('finish', () => {
+            const url = format(`https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`);
+            return url;
+        });
+
+        blobStream.end(file.buffer);
+    }
+    catch(err) {
+        throw new Error(err);
+    }
+}
 
 module.exports = router;
