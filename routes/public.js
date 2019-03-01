@@ -153,6 +153,7 @@ const uploadFileToCloud = (file) => {
         });
 
         blobStream.on('error', (err) => {
+            console.log(err);
             throw new Error(err);
         });
 
