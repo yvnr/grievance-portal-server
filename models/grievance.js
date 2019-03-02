@@ -368,7 +368,7 @@ const getStatsFunction = async (district) => {
         const grievancesObject = await Grievance.find({
             district: district
         }).exec();
-        let resultArray = [].repeat(0, 6);
+        let resultArray = [0,0,0,0,0,0];
         const grievancesStatusObjectPromises = grievancesObject.map(async grievanceObject => {
             const grievanceStatusObject = await GrievanceStatus.findOne({
                 grievanceId: grievanceObject.id
