@@ -126,7 +126,7 @@ const cancelGrievanceFunction = async function (token) {
             grievanceId: token
         }).exec();
 
-        if (grievanceStatusObject.status === `submitted`) {
+        if (grievanceStatusObject.status === "submitted") {
             const currentTime = Date.now() + "";
             const updatedGrievanceObject = await GrievanceStatus.findOneAndUpdate({
                 grievanceId: token
