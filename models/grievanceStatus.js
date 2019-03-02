@@ -158,10 +158,30 @@ const grievancesDataFunction = async function () {
         const grievanceStatusTotalResolved = await GrievanceStatus.count({
             status: 'resolved'
         }).exec();
+        const inProgressCount = await GrievanceStatus.count({
+            status: 'work in progress'
+        }).exec();
+        const rejectedCount = await GrievanceStatus.count({
+            status: 'rejected'
+        }).exec();
+        const cancelledCount = await GrievanceStatus.count({
+            status: 'cancelled'
+        }).exec();
+        const scrutinizedCount = await GrievanceStatus.count({
+            status: 'scrutinized'
+        }).exec();
+        const submittedCount = await GrievanceStatus.count({
+            status: 'submitted'
+        }).exec();
         const stats = {
             submitted: grievanceStatusTotalSubmited,
-            resolved: grievanceStatusTotalResolved
-
+            resolved: grievanceStatusTotalResolved,
+            submittedCount: submittedCount,
+            inProgressCount: inProgressCount,
+            cancelledCount: cancelledCount,
+            resolvedCount: grievanceStatusTotalResolved,
+            rejectedCount: rejectedCount,
+            scrutinizedCount: scrutinizedCount
         }
         return stats;
     } catch (err) {
@@ -171,3 +191,106 @@ const grievancesDataFunction = async function () {
 }
 
 module.exports.grievancesData = grievancesDataFunction;
+
+const getGrievancesFunction = async function (status) {
+    try {
+        const Grievance = require('./grievance');
+        const Escalation = require('./escalation');
+        const DistrictOfficer = require('./districtOfficer');
+        const ZonalOfficer = require('./zonalOfficer');
+
+        const grievancesStatusObjects = await GrievanceStatus.find({
+            status: status
+        }).exec();
+
+        const grievancesFinalObjectPromises = grievancesStatusObjects.map(async grievanceStatusObject => {
+
+            const grievanceObject = await Grievance.findOne({
+                id: grievanceStatusObject.grievanceId
+            }).exec();
+
+            const escalationObject = await Escalation.findOne({
+                grievanceId: grievanceObject.id
+            }).select('officerHierarchyStack').exec();
+
+            const officerId = escalationObject.officerHierarchyStack[0];
+            console.log(`${officerId}`);
+
+            if (escalationObject.officerHierarchyStack.length === 1) {
+                const districtOfficerDetailsObject = await DistrictOfficer.findOne({
+                    username: officerId
+                }).exec();
+
+                const date = new Date(Number(grievanceStatusObject.submittedTime));
+                grievanceStatusObject.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+
+                const finalObject = {
+                    officerName: districtOfficerDetailsObject.fullName,
+                    status: grievanceStatusObject.status,
+                    username: grievanceObject.username,
+                    fullName: grievanceObject.fullName,
+                    country: grievanceObject.country,
+                    address: grievanceObject.address,
+                    gender: grievanceObject.gender,
+                    state: grievanceObject.state,
+                    district: grievanceObject.state,
+                    district: grievanceObject.district,
+                    pincode: grievanceObject.pincode,
+                    email: grievanceObject.email,
+                    phoneNumber: grievanceObject.phoneNumber,
+                    description: grievanceObject.description,
+                    department: grievanceObject.department,
+                    token: grievanceObject.token,
+                    role: `districtOfficer`,
+                    submittedTime: grievanceStatusObject.submittedTime,
+                    officerPhoneNumber: districtOfficerDetailsObject.phoneNumber,
+                    officerEmailAddress: districtOfficerDetailsObject.email
+                };
+                return finalObject;
+
+            } else {
+                const zonalOfficerDetailsObject = await ZonalOfficer.findOne({
+                    username: officerId
+                }).exec();
+
+                const date = new Date(Number(grievanceStatusObject.submittedTime));
+                grievanceStatusObject.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+
+
+                const finalObject = {
+                    officerName: zonalOfficerDetailsObject.fullName,
+                    status: grievanceStatusObject.status,
+                    username: grievanceObject.username,
+                    fullName: grievanceObject.fullName,
+                    country: grievanceObject.country,
+                    address: grievanceObject.address,
+                    gender: grievanceObject.gender,
+                    state: grievanceObject.state,
+                    district: grievanceObject.state,
+                    district: grievanceObject.district,
+                    pincode: grievanceObject.pincode,
+                    email: grievanceObject.email,
+                    phoneNumber: grievanceObject.phoneNumber,
+                    description: grievanceObject.description,
+                    department: grievanceObject.department,
+                    token: grievanceObject.token,
+                    role: `zonalOfficer`,
+                    submittedTime: grievanceStatusObject.submittedTime,
+                    officerPhoneNumber: zonalOfficerDetailsObject.phoneNumber,
+                    officerEmailAddress: zonalOfficerDetailsObject.email
+                };
+                return finalObject;
+            }
+
+        });
+
+        const grievancesFinalObject = await Promise.all(grievancesFinalObjectPromises);
+        return grievancesFinalObject;
+
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+module.exports.getGrievances = getGrievancesFunction;

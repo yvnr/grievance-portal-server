@@ -184,7 +184,7 @@ async function getGrievancesFunction(username) {
             const officerId = escalationObject.officerHierarchyStack[0];
             console.log(`${officerId}`);
 
-            if (escalationObject.officerHierarchyStack.length == 1) {
+            if (escalationObject.officerHierarchyStack.length === 1) {
                 const districtOfficerDetailsObject = await DistrictOfficer.findOne({
                     username: officerId
                 }).select('fullName').exec();

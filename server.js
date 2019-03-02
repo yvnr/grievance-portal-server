@@ -123,6 +123,10 @@ connectToDatabase().then(() => {
     const official = require('./routes/official');
     app.use('/api/official', isAuthenticatedOfficial, official);
 
+    //dipp official 
+    const dippOfficial = require('./routes/dippOfficial');
+    app.use('/api/dippOfficial', dippOfficial);
+
 });
 
 app.listen(process.env.PORT || 8080, () => {
