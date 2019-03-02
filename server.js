@@ -34,7 +34,7 @@ connectToDatabase().then(() => {
     app.use(cors());
 
     //static
-    app.use('/attachments', express.static(path.join(__dirname, './attachments')));
+    app.use('/', express.static(path.join(__dirname, './')));
 
     //for authentication
     app.use(passport.initialize());
