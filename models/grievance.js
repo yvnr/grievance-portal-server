@@ -362,3 +362,40 @@ async function getGrievancesFromTokenFunction(token, tokenPassword) {
 }
 
 module.exports.getGrievancesFromToken = getGrievancesFromTokenFunction;
+
+const getStatsFunction = async (district) => {
+    try {
+        const grievancesObject = await Grievance.find({
+            district: district
+        }).exec();
+        let resultArray = [].repeat(0, 6);
+        const grievancesStatusObjectPromises = grievancesObject.map(async grievanceObject => {
+            const grievanceStatusObject = await GrievanceStatus.findOne({
+                grievanceId: grievanceObject.id
+            }).exec();
+            if (grievanceStatusObject.status === 'submitted') {
+                resultArray[0]++;
+            } else if (grievanceStatusObject.status === 'scrutinized') {
+                resultArray[1]++;
+            } else if (grievanceStatusObject.status === 'work in progress') {
+                resultArray[2]++;
+            } else if (grievanceStatusObject.status === 'resolved') {
+                resultArray[3]++;
+            } else if (grievanceStatusObject.status === 'rejected') {
+                resultArray[4]++;
+            } else {
+                resultArray[5]++;
+            }
+        });
+
+        const grievancesStatusObject = await Promise.all(grievancesStatusObjectPromises);
+        return {
+            message: 'successful',
+            statsArray: resultArray
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+module.exports.getStats = getStatsFunction;

@@ -39,4 +39,19 @@ router.route('/grievances')
             });
     });
 
+router.route('/districtStats')
+    .get((req, res) => {
+        Grievance.getStats(req.query.district)
+            .then(statsObject => {
+                console.log(grievances);
+                res.status(200).json(statsObject);
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: `Internal server error, please try again after sometime.`,
+                    stats: {}
+                });
+            });
+    });
+
 module.exports = router;
