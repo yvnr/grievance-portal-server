@@ -105,8 +105,8 @@ module.exports.raiseGrievance = async (newGrievance) => {
 
         //sending email to public
         const publicEmail = grievance.email;
-        const subForPublic = `Confimation of grievance lodgged by you.`;
-        const msgForPublic = `Your grievance has been recorded successfully\nyou can track your grievance status with\n     tokenId: ${grievance.token}\n   tokenPassword: ${grievance.tokenPassword}\nif this message was irrelavant to you kindly ignore`;
+        const subForPublic = `Confimation of grievance lodged by you.`;
+        const msgForPublic = `Your grievance has been recorded successfully.\nYou can now track your grievance status using\n TokenId: ${grievance.token}\nTokenPassword: ${grievance.tokenPassword}\nPlease do not share this details with anyone.\n\n\nIf this message is irrelevant, please ignore.`;
 
         await mail(publicEmail, subForPublic, msgForPublic);
         console.log(`mail sent to public`);
@@ -120,8 +120,8 @@ module.exports.raiseGrievance = async (newGrievance) => {
 
         //sending email to district officer
         const officerEmail = districtOfficer.email;
-        const subForOfficial = `notification from DIPP.`;
-        const msgForOfficial = `A new grievance has been launched in your zone\nkindly take respective actions and update datails in system.`;
+        const subForOfficial = `Notification from DIPP.`;
+        const msgForOfficial = `A new grievance has been launched in your zone.\nKindly take respective actions and update the details in system.`;
 
         await mail(officerEmail, subForOfficial, msgForOfficial);
         console.log(`mail sent to official`);

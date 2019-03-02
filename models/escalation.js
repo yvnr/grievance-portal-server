@@ -63,8 +63,8 @@ async function updateOfficer(idOfGrievance) {
 
         //sending email to district officer
         const officerEmail = zonalOfficerObject.email;
-        const subForOfficial = `notification from DIPP.`;
-        const msgForOfficial = `A new grievance has been launched in your zone\nkindly take respective actions and update datails in system.`;
+        const subForOfficial = `Notification from DIPP.`;
+        const msgForOfficial = `A new grievance has been launched in your zone.\nKindly take respective actions and update the details in system.`;
 
         await mail(officerEmail, subForOfficial, msgForOfficial);
         console.log(`mail sent to official`);
