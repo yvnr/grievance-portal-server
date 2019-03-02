@@ -21,7 +21,7 @@ console.log(gcloud);
 
 const cStorage = new gcloud.Storage({
     projectId: 'dipp-d6ff8',
-    keyFilename: './../dipp-d6ff8-firebase-adminsdk-jinqe-8423b0cc67.json'
+    keyFilename: './firebase.json'
 });
 
 const bucket = cStorage.bucket('gs://dipp-d6ff8.appspot.com/');
