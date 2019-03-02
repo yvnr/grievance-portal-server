@@ -143,10 +143,10 @@ module.exports.raiseGrievance = async (newGrievance) => {
         console.log(`${grievanceStatus}`);
 
         //calling function to check work in progress
-        const firstTimer = timer(grievance.id, 480000, null);
+        const firstTimer = timer(grievance.id, 240000, null);
 
         //calling function to check submitted/scrutinized
-        timer(grievance.id, 1800000, firstTimer);
+        timer(grievance.id, 120000, firstTimer);
 
         //sending response
         const trueObject = {
@@ -219,6 +219,10 @@ async function getGrievancesFunction(username) {
                     username: officerId
                 }).select('fullName').exec();
 
+                const date = new Date(Number(grievanceStatusObject.submittedTime));
+                grievanceStatusObject.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+
+
                 const finalObject = {
                     officerName: zonalOfficerDetailsObject.fullName,
                     status: grievanceStatusObject.status,
@@ -236,7 +240,8 @@ async function getGrievancesFunction(username) {
                     description: grievanceObject.description,
                     department: grievanceObject.department,
                     token: grievanceObject.token,
-                    role: `zonalOfficer`
+                    role: `zonalOfficer`,
+                    submittedTime: grievanceStatusObject.submittedTime
                 };
                 return finalObject;
             }
