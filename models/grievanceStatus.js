@@ -126,18 +126,22 @@ const cancelGrievanceFunction = async function (token) {
             grievanceId: token
         }).exec();
 
-        const currentTime = Date.now() + "";
-        const updatedGrievanceObject = await GrievanceStatus.findOneAndUpdate({
-            grievanceId: token
-        }, {
-            status: 'cancelled',
-            cancelledTime: currentTime
-        }, {
-            new: true
-        });
-        return {
-            object: updatedGrievanceObject,
-            message: `successful`
+        if (grievanceStatusObject.status === `submitted`) {
+            const currentTime = Date.now() + "";
+            const updatedGrievanceObject = await GrievanceStatus.findOneAndUpdate({
+                grievanceId: token
+            }, {
+                status: 'cancelled',
+                cancelledTime: currentTime
+            }, {
+                new: true
+            });
+            return {
+                object: updatedGrievanceObject,
+                message: `successful`
+            }
+        } else {
+            throw new Error();
         }
 
     } catch (err) {
