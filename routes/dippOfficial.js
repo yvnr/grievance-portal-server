@@ -43,10 +43,11 @@ router.route('/districtStats')
     .get((req, res) => {
         Grievance.getStats(req.query.district)
             .then(statsObject => {
-                console.log(grievances);
+                console.log(statsObject);
                 res.status(200).json(statsObject);
             })
             .catch(err => {
+                console.log(err);
                 res.status(500).json({
                     message: `Internal server error, please try again after sometime.`,
                     stats: {}
