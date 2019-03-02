@@ -89,7 +89,7 @@ router.route('/newGrievance')
                 .then(trueObject => {
                     console.log(trueObject);
                     res.status(200).json({
-                        message: `successful`
+                        message: `TokenId: ${tokenObject.token}\nTokenPassword: ${tokenObject.tokenPassword}`
                     });
                 })
                 .catch(err => {
