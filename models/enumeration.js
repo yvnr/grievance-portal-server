@@ -5,7 +5,7 @@ const Gender = ['Male',
 ];
 
 const State = ['Telangana',
-    'Uttarpradesh'
+    'Uttar Pradesh'
 ];
 
 const Zone = ['Telangana-North',

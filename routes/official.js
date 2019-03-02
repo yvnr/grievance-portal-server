@@ -17,7 +17,7 @@ const GrievanceResolution = require('./../models/grievanceResolution');
 const firebase = require('firebase');
 const gcloud = require('@google-cloud/storage');
 
-console.log(gcloud);
+//console.log(gcloud);
 
 const cStorage = new gcloud.Storage({
     projectId: 'dipp-d6ff8',
