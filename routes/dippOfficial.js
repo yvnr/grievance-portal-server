@@ -38,3 +38,5 @@ router.route('/grievances')
                 });
             });
     });
+
+module.exports = router;
