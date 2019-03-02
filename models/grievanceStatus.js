@@ -199,6 +199,10 @@ const getGrievancesFunction = async function (status) {
         const DistrictOfficer = require('./districtOfficer');
         const ZonalOfficer = require('./zonalOfficer');
 
+        if (status === 'accepted') {
+            status = 'work in progress'
+        }
+
         const grievancesStatusObjects = await GrievanceStatus.find({
             status: status
         }).exec();
