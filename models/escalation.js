@@ -121,6 +121,10 @@ async function getGrievancesFunction(officialUsername, status, role) {
 
                     console.log(grievanceStatus);
 
+                    if(status === 'accepted'){
+                        status = 'work in progress'
+                    }
+
                     if (grievanceStatus.status === status) {
                         const grievance = await Grievance.findOne({
                             id: grievanceIdObject.grievanceId
