@@ -121,7 +121,7 @@ async function getGrievancesFunction(officialUsername, status, role) {
 
                     console.log(grievanceStatus);
 
-                    if(status === 'accepted'){
+                    if(typeof status !== `undefined` && status === 'accepted'){
                         status = 'work in progress'
                     }
 
