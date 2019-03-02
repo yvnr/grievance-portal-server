@@ -19,7 +19,7 @@ const gcloud = require('@google-cloud/storage');
 
 const cStorage = new gcloud.Storage({
     projectId: 'dipp-d6ff8',
-    keyFilename: Path.join(__dirname, 'firebase.json')
+    keyFilename: './firebase.json'
 });
 
 const bucket = cStorage.bucket('gs://dipp-d6ff8.appspot.com/');
