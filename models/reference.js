@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const Email = require('mongoose-type-email');
 const Enumeration = require('./enumeration');
 
+//for sending emails
+const mail = require('./../mail');
+
 const referenceSchema = new mongoose.Schema({
     id: {
         type: String,
@@ -81,6 +84,16 @@ module.exports = Reference;
 async function createReferenceFunction(reference) {
     try {
         const referenceObject = reference.save();
+
+        //sending email to public
+        const publicEmail = reference.email;
+        const subForPublic = `Confimation of grievance lodged by you.`;
+        const msgForPublic = `Your grievance has been recorded successfully.\nYou can now track your grievance status using\n TokenId: ${reference.token}\nTokenPassword: ${reference.tokenPassword}\nPlease do not share this details with anyone.\n\n\nIf this message is irrelevant, please ignore.`;
+
+        await mail(publicEmail, subForPublic, msgForPublic);
+        console.log(`mail sent to public`);
+
+
         return referenceObject
     } catch (err) {
         throw err;
