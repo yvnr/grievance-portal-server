@@ -87,8 +87,8 @@ router.route('/newGrievance')
                             description: req.body.description,
                             department: req.body.department,
                             attachments: req.body.attachments,
-                            token: req.body.token,
-                            tokenPassword: req.body.tokenPassword
+                            token: tokenObject.token,
+                            tokenPassword: tokenObject.tokenPassword
                         });
                         Reference.createReference(reference)
                             .then(reference => {
