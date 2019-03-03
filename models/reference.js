@@ -113,20 +113,20 @@ async function getReferencesFunction() {
                     officerName: districtOfficerDetailsObject.fullName,
                     officerPhoneNumber: districtOfficerDetailsObject.phoneNumber,
                     officerEmail: districtOfficerDetailsObject.email,
-                    username: grievanceObject.username,
-                    fullName: grievanceObject.fullName,
-                    country: grievanceObject.country,
-                    address: grievanceObject.address,
-                    gender: grievanceObject.gender,
-                    state: grievanceObject.state,
-                    district: grievanceObject.state,
-                    district: grievanceObject.district,
-                    pincode: grievanceObject.pincode,
-                    email: grievanceObject.email,
-                    phoneNumber: grievanceObject.phoneNumber,
-                    description: grievanceObject.description,
-                    department: grievanceObject.department,
-                    token: grievanceObject.token,
+                    username: reference.username,
+                    fullName: reference.fullName,
+                    country: reference.country,
+                    address: reference.address,
+                    gender: reference.gender,
+                    state: reference.state,
+                    district: reference.state,
+                    district: reference.district,
+                    pincode: reference.pincode,
+                    email: reference.email,
+                    phoneNumber: reference.phoneNumber,
+                    description: reference.description,
+                    department: reference.department,
+                    token: reference.token,
                     role: `districtOfficer`
                 };
                 return finalObject;
@@ -136,26 +136,26 @@ async function getReferencesFunction() {
 
                 const zonalOfficerDetailsObject = await ZonalOfficer.findOne({
                     username: officerId
-                }).select('fullName').exec();
+                }).exec();
 
                 const finalObject = {
                     officerName: zonalOfficerDetailsObject.fullName,
                     officerPhoneNumber: zonalOfficerDetailsObject.phoneNumber,
                     officerEmail: zonalOfficerDetailsObject.email,
-                    username: grievanceObject.username,
-                    fullName: grievanceObject.fullName,
-                    country: grievanceObject.country,
-                    address: grievanceObject.address,
-                    gender: grievanceObject.gender,
-                    state: grievanceObject.state,
-                    district: grievanceObject.state,
-                    district: grievanceObject.district,
-                    pincode: grievanceObject.pincode,
-                    email: grievanceObject.email,
-                    phoneNumber: grievanceObject.phoneNumber,
-                    description: grievanceObject.description,
-                    department: grievanceObject.department,
-                    token: grievanceObject.token,
+                    username: reference.username,
+                    fullName: reference.fullName,
+                    country: reference.country,
+                    address: reference.address,
+                    gender: reference.gender,
+                    state: reference.state,
+                    district: reference.state,
+                    district: reference.district,
+                    pincode: reference.pincode,
+                    email: reference.email,
+                    phoneNumber: reference.phoneNumber,
+                    description: reference.description,
+                    department: reference.department,
+                    token: reference.token,
                     role: `zonalOfficer`
                 };
                 return finalObject;
