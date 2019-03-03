@@ -86,7 +86,7 @@ router.route('/newGrievance')
                             phoneNumber: req.body.phoneNumber,
                             description: req.body.description,
                             department: req.body.department,
-                            attachments: req.body.attachments,
+                            attachments: attachmentsPath,
                             token: tokenObject.token,
                             tokenPassword: tokenObject.tokenPassword
                         });

@@ -109,9 +109,6 @@ async function getReferencesFunction() {
                     username: officerId
                 }).exec();
 
-                const date = new Date(Number(grievanceStatusObject.submittedTime));
-                grievanceStatusObject.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
-
                 const finalObject = {
                     officerName: districtOfficerDetailsObject.fullName,
                     officerPhoneNumber: districtOfficerDetailsObject.phoneNumber,
@@ -142,9 +139,6 @@ async function getReferencesFunction() {
                 const zonalOfficerDetailsObject = await ZonalOfficer.findOne({
                     username: officerId
                 }).select('fullName').exec();
-
-                const date = new Date(Number(grievanceStatusObject.submittedTime));
-                grievanceStatusObject.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
 
                 const finalObject = {
                     officerName: zonalOfficerDetailsObject.fullName,
