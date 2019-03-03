@@ -113,7 +113,6 @@ async function getReferencesFunction() {
                     officerName: districtOfficerDetailsObject.fullName,
                     officerPhoneNumber: districtOfficerDetailsObject.phoneNumber,
                     officerEmail: districtOfficerDetailsObject.email,
-                    status: grievanceStatusObject.status,
                     username: grievanceObject.username,
                     fullName: grievanceObject.fullName,
                     country: grievanceObject.country,
@@ -128,8 +127,7 @@ async function getReferencesFunction() {
                     description: grievanceObject.description,
                     department: grievanceObject.department,
                     token: grievanceObject.token,
-                    role: `districtOfficer`,
-                    submittedTime: grievanceStatusObject.submittedTime
+                    role: `districtOfficer`
                 };
                 return finalObject;
 
@@ -144,7 +142,6 @@ async function getReferencesFunction() {
                     officerName: zonalOfficerDetailsObject.fullName,
                     officerPhoneNumber: zonalOfficerDetailsObject.phoneNumber,
                     officerEmail: zonalOfficerDetailsObject.email,
-                    status: grievanceStatusObject.status,
                     username: grievanceObject.username,
                     fullName: grievanceObject.fullName,
                     country: grievanceObject.country,
@@ -159,8 +156,7 @@ async function getReferencesFunction() {
                     description: grievanceObject.description,
                     department: grievanceObject.department,
                     token: grievanceObject.token,
-                    role: `zonalOfficer`,
-                    submittedTime: grievanceStatusObject.submittedTime
+                    role: `zonalOfficer`
                 };
                 return finalObject;
             }
