@@ -10,6 +10,7 @@ const Path = require('path');
 const Public = require('./../models/public');
 const Grievance = require('./../models/grievance');
 const GrievanceStatus = require('./../models/grievanceStatus');
+const Reference = require('./../models/reference');
 
 //initialize cloud storage
 const firebase = require('firebase');
@@ -66,37 +67,78 @@ router.route('/newGrievance')
                 tokenPassword: currentTime.substring(3, 6) + req.user.username.substring(3, 6)
             };
 
-            const grievance = new Grievance({
-                id: currentTime,
-                username: req.user.username,
-                fullName: req.body.fullName,
-                country: req.body.country,
-                address: req.body.address,
-                gender: req.body.gender,
-                state: req.body.state,
-                district: req.body.district,
-                pincode: req.body.pincode,
-                email: req.body.email,
-                phoneNumber: req.body.phoneNumber,
-                description: req.body.description,
-                department: req.body.department,
-                attachments: attachmentsPath,
-                token: tokenObject.token,
-                tokenPassword: tokenObject.tokenPassword
-            });
-
-            Grievance.raiseGrievance(grievance)
-                .then(trueObject => {
-                    console.log(trueObject);
-                    res.status(200).json({
-                        message: `TokenId:${tokenObject.token} TokenPassword:${tokenObject.tokenPassword}`
+            if ((req.body.reference.length) > 0) {
+                Grievance.findOne({
+                        id: reference
+                    })
+                    .then(async grievance => {
+                        const reference = new Reference({
+                            id: grievance.id,
+                            username: grievance.username,
+                            fullName: grievance.fullName,
+                            country: grievance.country,
+                            address: grievance.address,
+                            gender: grievance.gender,
+                            state: grievance.state,
+                            district: grievance.district,
+                            pincode: grievance.pincode,
+                            email: grievance.email,
+                            phoneNumber: grievance.phoneNumber,
+                            description: grievance.description,
+                            department: grievance.department,
+                            attachments: grievance.attachments,
+                            token: grievance.token,
+                            tokenPassword: grievance.tokenPassword
+                        });
+                        Reference.createReference(reference)
+                            .then(reference => {
+                                console.log(reference);
+                                res.status(200).json({
+                                    message: `successful`,
+                                    reference: reference
+                                });
+                            });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json({
+                            message: `Internal server error, please try after some time`,
+                            reference: {}
+                        });
                     });
-                })
-                .catch(err => {
-                    res.status(500).json({
-                        message: `Internal server error, please try again after sometime.`
-                    });
+            } else {
+                const grievance = new Grievance({
+                    id: currentTime,
+                    username: req.user.username,
+                    fullName: req.body.fullName,
+                    country: req.body.country,
+                    address: req.body.address,
+                    gender: req.body.gender,
+                    state: req.body.state,
+                    district: req.body.district,
+                    pincode: req.body.pincode,
+                    email: req.body.email,
+                    phoneNumber: req.body.phoneNumber,
+                    description: req.body.description,
+                    department: req.body.department,
+                    attachments: attachmentsPath,
+                    token: tokenObject.token,
+                    tokenPassword: tokenObject.tokenPassword
                 });
+
+                Grievance.raiseGrievance(grievance)
+                    .then(trueObject => {
+                        console.log(trueObject);
+                        res.status(200).json({
+                            message: `TokenId:${tokenObject.token} TokenPassword:${tokenObject.tokenPassword}`
+                        });
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: `Internal server error, please try again after sometime.`
+                        });
+                    });
+            }
         } catch (err) {
             console.log(err);
             res.status(500).json({
@@ -108,10 +150,10 @@ router.route('/newGrievance')
 router.route('/cancelGrievance')
     .put((req, res) => {
         GrievanceStatus.cancelGrievance(req.query.token)
-            .then(resultObject => {
-                console.log(resultObject.object);
+            .then(grievanceObject => {
+                console.log(grievanceObject.object);
                 res.status(200).json({
-                    message: resultObject.message
+                    message: grievanceObject.message
                 });
             })
             .catch(err => {

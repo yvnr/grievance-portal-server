@@ -72,6 +72,8 @@ async function getGrievancesForZonalOfficersFunction(username) {
                     grievanceId: grievanceObject.id
                 }).select('officerHierarchyStack').exec();
 
+                console.log(escalationObject.officerHierarchyStack);
+
                 let index = 0;
                 if (escalationObject.officerHierarchyStack.length === 2) {
                     index = 1;

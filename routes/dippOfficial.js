@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const GrievanceStatus = require('./../models/grievanceStatus');
 const Grievance = require('./../models/grievance');
+const Reference = require('./../models/reference');
 
 router.route('/stats')
     .get((req, res) => {
@@ -51,6 +52,25 @@ router.route('/districtStats')
                 res.status(500).json({
                     message: `Internal server error, please try again after sometime.`,
                     stats: {}
+                });
+            });
+    });
+
+router.route('/rtiGrievances')
+    .get((req, res) => {
+        Reference.getReferences()
+            .then(references => {
+                console.log(references);
+                res.status(200).json({
+                    message: `successful`,
+                    references: references
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: `Internal server error, try after sometime`,
+                    references: []
                 });
             });
     });
