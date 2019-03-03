@@ -170,10 +170,10 @@ async function getReferencesFunction() {
                 };
                 return finalObject;
             }
-
-            const referenceObject = await Promise.all(referenceObjectPromises);
-            return referenceObject;
         });
+
+        const referenceObject = await Promise.all(referenceObjectPromises);
+        return referenceObject;
     } catch (err) {
         console.log(err);
         throw err;
