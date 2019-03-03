@@ -53,9 +53,13 @@ async function getGrievancesForZonalOfficersFunction(username) {
         username: username
     }).select('zoneName').exec();
 
+    console.log(zonnalOfficerObject.zoneName);
+
     const districtsObject = await District.find({
         zoneName: zonnalOfficerObject.zoneName
     }).exec();
+
+    console.log(districtsObject);
 
     const grievancesFinalObjectPromise = districtsObject.map(async districtObject => {
         const grievancesObject = await Grievance.find({
@@ -111,11 +115,29 @@ async function getGrievancesForZonalOfficersFunction(username) {
         });
 
         const grievancesObjectForTotalZone = await Promise.all(grievancesObjectPromise);
-        return grievancesObjectForTotalZone;
+        const grievancesObjectForTotalZoneAfterFilter = await grievancesObjectForTotalZone.filter(validation);
+        return grievancesObjectForTotalZoneAfterFilter;
     });
 
     const grievancesFinalObject = await Promise.all(grievancesFinalObjectPromise);
-    return grievancesFinalObject;
+    const grievancesFinalObjectAfterFilter = await grievancesFinalObject.filter(validationOfLength);
+    return grievancesFinalObjectAfterFilter;
+}
+
+function validation(object) {
+    if (typeof object !== `undefined`) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function validationOfLength(array) {
+    if (array.length > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 module.exports.getGrievancesForZonalOfficers = getGrievancesForZonalOfficersFunction;

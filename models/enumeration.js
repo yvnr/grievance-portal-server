@@ -10,8 +10,8 @@ const State = ['Telangana',
 
 const Zone = ['Telangana-North',
     'Telanagan-South',
-    'Uttarpradesh-North',
-    'Uttarpradesh-South'
+    'Uttar Pradesh-North',
+    'Uttar Pradesh-South'
 ];
 
 const District = ['Hyderabad',
