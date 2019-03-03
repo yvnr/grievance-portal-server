@@ -69,26 +69,26 @@ router.route('/newGrievance')
 
             if ((req.body.reference.length) > 0) {
                 Grievance.findOne({
-                        id: reference
+                        id: req.body.reference
                     })
                     .then(async grievance => {
                         const reference = new Reference({
                             id: grievance.id,
-                            username: grievance.username,
-                            fullName: grievance.fullName,
-                            country: grievance.country,
-                            address: grievance.address,
-                            gender: grievance.gender,
-                            state: grievance.state,
-                            district: grievance.district,
-                            pincode: grievance.pincode,
-                            email: grievance.email,
-                            phoneNumber: grievance.phoneNumber,
-                            description: grievance.description,
-                            department: grievance.department,
-                            attachments: grievance.attachments,
-                            token: grievance.token,
-                            tokenPassword: grievance.tokenPassword
+                            username: req.user.username,
+                            fullName: req.body.fullName,
+                            country: req.body.country,
+                            address: req.body.address,
+                            gender: req.body.gender,
+                            state: req.body.state,
+                            district: req.body.district,
+                            pincode: req.body.pincode,
+                            email: req.body.email,
+                            phoneNumber: req.body.phoneNumber,
+                            description: req.body.description,
+                            department: req.body.department,
+                            attachments: req.body.attachments,
+                            token: req.body.token,
+                            tokenPassword: req.body.tokenPassword
                         });
                         Reference.createReference(reference)
                             .then(reference => {
