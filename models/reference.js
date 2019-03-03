@@ -90,53 +90,94 @@ async function createReferenceFunction(reference) {
 module.exports.createReference = createReferenceFunction;
 
 async function getReferencesFunction() {
-    const Escalation = require('./escalation');
+    try {
+        const Escalation = require('./escalation');
 
-    const references = await Reference.find({}).exec();
-    const referenceObjectPromises = references.map(async reference => {
-        const escalationObject = await Escalation.findOne({
-            grievanceId: reference.id
-        }).select('officerHierarchyStack').exec();
+        const references = await Reference.find({}).exec();
+        const referenceObjectPromises = references.map(async reference => {
+            const escalationObject = await Escalation.findOne({
+                grievanceId: reference.id
+            }).select('officerHierarchyStack').exec();
 
-        const officerId = escalationObject.officerHierarchyStack[0];
-        console.log(`${officerId}`);
+            const officerId = escalationObject.officerHierarchyStack[0];
+            console.log(`${officerId}`);
 
-        if (escalationObject.officerHierarchyStack.length === 1) {
-            const DistrictOfficer = require('./districtOfficer');
+            if (escalationObject.officerHierarchyStack.length === 1) {
+                const DistrictOfficer = require('./districtOfficer');
 
-            const districtOfficerDetailsObject = await DistrictOfficer.findOne({
-                username: officerId
-            }).exec();
+                const districtOfficerDetailsObject = await DistrictOfficer.findOne({
+                    username: officerId
+                }).exec();
 
-            const date = new Date(Number(grievanceStatusObject.submittedTime));
-            grievanceStatusObject.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+                const date = new Date(Number(grievanceStatusObject.submittedTime));
+                grievanceStatusObject.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
 
-            const finalObject = {
-                officerName: districtOfficerDetailsObject.fullName,
-                status: grievanceStatusObject.status,
-                username: grievanceObject.username,
-                fullName: grievanceObject.fullName,
-                country: grievanceObject.country,
-                address: grievanceObject.address,
-                gender: grievanceObject.gender,
-                state: grievanceObject.state,
-                district: grievanceObject.state,
-                district: grievanceObject.district,
-                pincode: grievanceObject.pincode,
-                email: grievanceObject.email,
-                phoneNumber: grievanceObject.phoneNumber,
-                description: grievanceObject.description,
-                department: grievanceObject.department,
-                token: grievanceObject.token,
-                role: `districtOfficer`,
-                submittedTime: grievanceStatusObject.submittedTime
-            };
-            return finalObject;
+                const finalObject = {
+                    officerName: districtOfficerDetailsObject.fullName,
+                    officerPhoneNumber: districtOfficerDetailsObject.phoneNumber,
+                    officerEmail: districtOfficerDetailsObject.email,
+                    status: grievanceStatusObject.status,
+                    username: grievanceObject.username,
+                    fullName: grievanceObject.fullName,
+                    country: grievanceObject.country,
+                    address: grievanceObject.address,
+                    gender: grievanceObject.gender,
+                    state: grievanceObject.state,
+                    district: grievanceObject.state,
+                    district: grievanceObject.district,
+                    pincode: grievanceObject.pincode,
+                    email: grievanceObject.email,
+                    phoneNumber: grievanceObject.phoneNumber,
+                    description: grievanceObject.description,
+                    department: grievanceObject.department,
+                    token: grievanceObject.token,
+                    role: `districtOfficer`,
+                    submittedTime: grievanceStatusObject.submittedTime
+                };
+                return finalObject;
 
-        } else {
+            } else {
+                const ZonalOfficer = require('./zonalOfficer');
 
-        }
-    });
+                const zonalOfficerDetailsObject = await ZonalOfficer.findOne({
+                    username: officerId
+                }).select('fullName').exec();
+
+                const date = new Date(Number(grievanceStatusObject.submittedTime));
+                grievanceStatusObject.submittedTime = `${date.toLocaleDateString("en-US")} ${date.toLocaleTimeString("en-US")}`;
+
+                const finalObject = {
+                    officerName: zonalOfficerDetailsObject.fullName,
+                    officerPhoneNumber: zonalOfficerDetailsObject.phoneNumber,
+                    officerEmail: zonalOfficerDetailsObject.email,
+                    status: grievanceStatusObject.status,
+                    username: grievanceObject.username,
+                    fullName: grievanceObject.fullName,
+                    country: grievanceObject.country,
+                    address: grievanceObject.address,
+                    gender: grievanceObject.gender,
+                    state: grievanceObject.state,
+                    district: grievanceObject.state,
+                    district: grievanceObject.district,
+                    pincode: grievanceObject.pincode,
+                    email: grievanceObject.email,
+                    phoneNumber: grievanceObject.phoneNumber,
+                    description: grievanceObject.description,
+                    department: grievanceObject.department,
+                    token: grievanceObject.token,
+                    role: `zonalOfficer`,
+                    submittedTime: grievanceStatusObject.submittedTime
+                };
+                return finalObject;
+            }
+
+            const referenceObject = await Promise.all(referenceObjectPromises);
+            return referenceObject;
+        });
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
 }
 
 module.exports.getReferences = getReferencesFunction;
