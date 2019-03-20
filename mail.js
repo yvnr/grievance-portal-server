@@ -5,9 +5,10 @@ module.exports = async (userGmail, subject, message) => {
         const transporter = nodemailer.createTransport({
             host: `smtp.gmail.com`,
             service: `gmail`,
+            //The following details needed to be entered
             auth: {
-                user: `hakunamatatadipp@gmail.com`,
-                pass: `beanbag123`
+                user: `**********`,
+                pass: `**********`
             }
         });
 
